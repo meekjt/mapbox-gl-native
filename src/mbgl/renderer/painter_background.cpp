@@ -1,6 +1,5 @@
 #include <mbgl/renderer/painter.hpp>
 #include <mbgl/renderer/paint_parameters.hpp>
-#include <mbgl/gl/gl.hpp>
 
 #include <mbgl/style/layers/background_layer.hpp>
 #include <mbgl/style/layers/background_layer_impl.hpp>
@@ -13,78 +12,60 @@ namespace mbgl {
 
 using namespace style;
 
-void Painter::renderBackground(PaintParameters& parameters, const BackgroundLayer& layer) {
+void Painter::renderBackground(PaintParameters&, const BackgroundLayer& layer) {
     // Note that for bottommost layers without a pattern, the background color is drawn with
     // glClear rather than this method.
     const BackgroundPaintProperties& properties = layer.impl->paint;
 
-    bool isPatterned = !properties.backgroundPattern.value.to.empty();// && false;
-    optional<SpriteAtlasPosition> imagePosA;
-    optional<SpriteAtlasPosition> imagePosB;
-
-    auto& patternShader = parameters.shaders.pattern;
-    auto& plainShader = parameters.shaders.plain;
-    auto& arrayBackgroundPattern = parameters.shaders.backgroundPatternArray;
-    auto& arrayBackground = parameters.shaders.backgroundArray;
-
-    if (isPatterned) {
-        imagePosA = spriteAtlas->getPosition(properties.backgroundPattern.value.from,
-                                             SpritePatternMode::Repeating);
-        imagePosB = spriteAtlas->getPosition(properties.backgroundPattern.value.to,
-                                             SpritePatternMode::Repeating);
+    if (!properties.backgroundPattern.value.to.empty()) {
+        optional<SpriteAtlasPosition> imagePosA = spriteAtlas->getPosition(
+            properties.backgroundPattern.value.from, SpritePatternMode::Repeating);
+        optional<SpriteAtlasPosition> imagePosB = spriteAtlas->getPosition(
+            properties.backgroundPattern.value.to, SpritePatternMode::Repeating);
 
         if (!imagePosA || !imagePosB)
             return;
 
-        context.program = patternShader.getID();
-        patternShader.u_matrix = identityMatrix;
-        patternShader.u_pattern_tl_a = imagePosA->tl;
-        patternShader.u_pattern_br_a = imagePosA->br;
-        patternShader.u_pattern_tl_b = imagePosB->tl;
-        patternShader.u_pattern_br_b = imagePosB->br;
-        patternShader.u_mix = properties.backgroundPattern.value.t;
-        patternShader.u_opacity = properties.backgroundOpacity;
+        for (const auto& tileID : util::tileCover(state, state.getIntegerZoom())) {
+            int32_t tileSizeAtNearestZoom = util::tileSize * state.zoomScale(state.getIntegerZoom() - tileID.canonical.z);
 
-        spriteAtlas->bind(true, context, 0);
-        arrayBackgroundPattern.bind(patternShader, tileStencilBuffer, BUFFER_OFFSET(0), context);
+            spriteAtlas->bind(true, context, 0);
 
-    } else {
-        context.program = plainShader.getID();
-        plainShader.u_color = properties.backgroundColor;
-        plainShader.u_opacity = properties.backgroundOpacity;
-
-        arrayBackground.bind(plainShader, tileStencilBuffer, BUFFER_OFFSET(0), context);
-    }
-
-    context.stencilTest = false;
-    context.depthFunc = gl::DepthTestFunction::LessEqual;
-    context.depthTest = true;
-    context.depthMask = false;
-    setDepthSublayer(0);
-
-    for (const auto& tileID : util::tileCover(state, state.getIntegerZoom())) {
-        mat4 vertexMatrix;
-        state.matrixFor(vertexMatrix, tileID);
-        matrix::multiply(vertexMatrix, projMatrix, vertexMatrix);
-
-        if (isPatterned) {
-            patternShader.u_matrix = vertexMatrix;
-            patternShader.u_pattern_size_a = imagePosA->size;
-            patternShader.u_pattern_size_b = imagePosB->size;
-            patternShader.u_scale_a = properties.backgroundPattern.value.fromScale;
-            patternShader.u_scale_b = properties.backgroundPattern.value.toScale;
-            patternShader.u_tile_units_to_pixels = 1.0f / tileID.pixelsToTileUnits(1.0f, state.getIntegerZoom());
-
-            GLint tileSizeAtNearestZoom = util::tileSize * state.zoomScale(state.getIntegerZoom() - tileID.canonical.z);
-            GLint pixelX = tileSizeAtNearestZoom * (tileID.canonical.x + tileID.wrap * state.zoomScale(tileID.canonical.z));
-            GLint pixelY = tileSizeAtNearestZoom * tileID.canonical.y;
-            patternShader.u_pixel_coord_upper = {{ float(pixelX >> 16), float(pixelY >> 16) }};
-            patternShader.u_pixel_coord_lower = {{ float(pixelX & 0xFFFF), float(pixelY & 0xFFFF) }};
-        } else {
-            plainShader.u_matrix = vertexMatrix;
+            context.draw(
+                gl::Depth { gl::Depth::LessEqual, false, depthRangeForSublayer(0), },
+                gl::Stencil::disabled(),
+                colorForRenderPass(),
+                shaders->pattern.bindUniforms(
+                    matrixForTile(tileID),
+                    *imagePosA, properties.backgroundPattern.value.fromScale,
+                    *imagePosB, properties.backgroundPattern.value.toScale,
+                    properties.backgroundOpacity,
+                    properties.backgroundPattern.value.t,
+                    1.0f / tileID.pixelsToTileUnits(1.0f, state.getIntegerZoom()),
+                    Point<int32_t> {
+                        int32_t(tileSizeAtNearestZoom * (tileID.canonical.x + tileID.wrap * state.zoomScale(tileID.canonical.z))),
+                        int32_t(tileSizeAtNearestZoom * tileID.canonical.y)
+                    }
+                ),
+                gl::Vertexes { tileTriangleVertexes },
+                gl::Unindexed {},
+                gl::TriangleStrip {});
         }
-
-        MBGL_CHECK_ERROR(glDrawArrays(GL_TRIANGLE_STRIP, 0, (GLsizei)tileStencilBuffer.index()));
+    } else {
+        for (const auto& tileID : util::tileCover(state, state.getIntegerZoom())) {
+            context.draw(
+                gl::Depth { gl::Depth::LessEqual, false, depthRangeForSublayer(0), },
+                gl::Stencil::disabled(),
+                colorForRenderPass(),
+                shaders->plain.bindUniforms(
+                    matrixForTile(tileID),
+                    properties.backgroundColor,
+                    properties.backgroundOpacity
+                ),
+                gl::Vertexes { tileTriangleVertexes },
+                gl::Unindexed {},
+                gl::TriangleStrip {});
+        }
     }
 }
 

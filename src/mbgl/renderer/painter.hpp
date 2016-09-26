@@ -12,6 +12,7 @@
 #include <mbgl/geometry/static_vertex_buffer.hpp>
 
 #include <mbgl/gl/context.hpp>
+#include <mbgl/gl/plain_vertex.hpp>
 
 #include <mbgl/style/style.hpp>
 
@@ -77,20 +78,8 @@ public:
 
     void cleanup();
 
-    // Renders debug information for a tile.
+    void renderClippingMask(const UnwrappedTileID&, const ClipID&);
     void renderTileDebug(const RenderTile&);
-
-    // Renders the red debug frame around a tile, visualizing its perimeter.
-    void renderDebugFrame(const mat4 &matrix);
-
-#ifndef NDEBUG
-    // Renders tile clip boundaries, using stencil buffer to calculate fill color.
-    void renderClipMasks();
-    // Renders the depth buffer.
-    void renderDepthBuffer();
-#endif
-
-    void renderDebugText(Tile&, const mat4&);
     void renderFill(PaintParameters&, FillBucket&, const style::FillLayer&, const RenderTile&);
     void renderLine(PaintParameters&, LineBucket&, const style::LineLayer&, const RenderTile&);
     void renderCircle(PaintParameters&, CircleBucket&, const style::CircleLayer&, const RenderTile&);
@@ -102,8 +91,6 @@ public:
     float contrastFactor(float contrast);
     std::array<float, 3> spinWeights(float spin_value);
 
-    void drawClippingMasks(PaintParameters&, const std::map<UnwrappedTileID, ClipID>&);
-
     bool needsAnimation() const;
 
 private:
@@ -114,8 +101,6 @@ private:
                     RenderPass,
                     Iterator it, Iterator end,
                     uint32_t i, int8_t increment);
-
-    void setClipping(const ClipID&);
 
     void renderSDF(SymbolBucket&,
                    const RenderTile&,
@@ -139,7 +124,14 @@ private:
                    style::TranslateAnchorType translateAnchor,
                    float paintSize);
 
+    mat4 matrixForTile(const UnwrappedTileID&);
+    Range<float> depthRangeForSublayer(int n) const;
+    gl::Stencil stencilForClipping(const ClipID&) const;
+    gl::Color colorForRenderPass() const;
+
+    // TODO: remove
     void setDepthSublayer(int n);
+    void setClipping(const ClipID&);
 
 #ifndef NDEBUG
     PaintMode paintMode() const {
@@ -188,33 +180,14 @@ private:
     std::unique_ptr<Shaders> overdrawShaders;
 #endif
 
-    // Set up the stencil quad we're using to generate the stencil mask.
-    StaticVertexBuffer tileStencilBuffer {
-        // top left triangle
-        {{ 0, 0 }},
-        {{ util::EXTENT, 0 }},
-        {{ 0, util::EXTENT }},
-
-        // bottom right triangle
-        {{ util::EXTENT, 0 }},
-        {{ 0, util::EXTENT }},
-        {{ util::EXTENT, util::EXTENT }},
-    };
+    gl::VertexBuffer<gl::PlainVertex> tileTriangleVertexes;
+    gl::VertexBuffer<gl::PlainVertex> tileLineStripVertexes;
 
     StaticRasterVertexBuffer rasterBoundsBuffer {
         {{ 0, 0, 0, 0 }},
         {{ util::EXTENT, 0, 32767, 0 }},
         {{ 0, util::EXTENT, 0, 32767 }},
         {{ util::EXTENT, util::EXTENT, 32767, 32767 }},
-    };
-
-    // Set up the tile boundary lines we're using to draw the tile outlines.
-    StaticVertexBuffer tileBorderBuffer {
-        {{ 0, 0 }},
-        {{ util::EXTENT, 0 }},
-        {{ util::EXTENT, util::EXTENT }},
-        {{ 0, util::EXTENT }},
-        {{ 0, 0 }},
     };
 
     VertexArrayObject tileBorderArray;

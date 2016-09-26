@@ -36,6 +36,7 @@ protected:
            gl::Context&,
            Defines defines = Defines::None);
 
+public:
     static constexpr gl::AttributeLocation         a_pos = 0;
     static constexpr gl::AttributeLocation     a_extrude = 1;
     static constexpr gl::AttributeLocation      a_offset = 2;

@@ -2,13 +2,29 @@
 
 #include <mbgl/shader/shader.hpp>
 #include <mbgl/shader/uniform.hpp>
+#include <mbgl/gl/program.hpp>
+#include <mbgl/util/mat4.hpp>
+#include <mbgl/util/geometry.hpp>
 
 namespace mbgl {
+
+struct SpriteAtlasPosition;
 
 class PatternShader : public Shader {
 public:
     PatternShader(gl::Context&, Defines defines = None);
 
+    gl::Program bindUniforms(const mat4&,
+                             const SpriteAtlasPosition& posA,
+                             float scaleA,
+                             const SpriteAtlasPosition& posB,
+                             float scaleB,
+                             float opacity,
+                             float mix,
+                             float tileUnitsToPixels,
+                             Point<int32_t> pixelCoord);
+
+// TODO: private:
     void bind(int8_t* offset) final;
 
     UniformMatrix<4>              u_matrix               = {"u_matrix",               *this};

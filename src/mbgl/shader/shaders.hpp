@@ -49,8 +49,6 @@ public:
 
     VertexArrayObject coveringPlainArray;
     VertexArrayObject coveringRasterArray;
-    VertexArrayObject backgroundPatternArray;
-    VertexArrayObject backgroundArray;
 };
 
 } // namespace mbgl

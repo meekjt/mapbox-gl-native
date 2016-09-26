@@ -130,6 +130,13 @@ void Context::reset() {
     performCleanup();
 }
 
+UniqueBuffer Context::createVertexBufferWithData(const void* data, std::size_t size) {
+    UniqueBuffer result = createBuffer();
+    vertexBuffer = result;
+    MBGL_CHECK_ERROR(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
+    return result;
+}
+
 namespace {
 
 template <typename Fn>
@@ -146,9 +153,6 @@ void applyStateFunction(Context& context, Fn&& fn) {
     fn(context.blendFunc);
     fn(context.blendColor);
     fn(context.colorMask);
-    fn(context.clearDepth);
-    fn(context.clearColor);
-    fn(context.clearStencil);
     fn(context.program);
     fn(context.lineWidth);
     fn(context.activeTexture);
@@ -174,6 +178,257 @@ void Context::resetState() {
 
 void Context::setDirtyState() {
     applyStateFunction(*this, [](auto& state) { state.setDirty(); });
+}
+
+void Context::clear(optional<mbgl::Color> color,
+                    optional<float> depth,
+                    optional<int32_t> stencil) {
+    GLbitfield mask = 0;
+
+    if (color) {
+        mask |= GL_COLOR_BUFFER_BIT;
+        MBGL_CHECK_ERROR(glClearColor(color->r, color->g, color->b, color->a));
+    }
+
+    if (depth) {
+        mask |= GL_DEPTH_BUFFER_BIT;
+        MBGL_CHECK_ERROR(glClearDepth(*depth));
+    }
+
+    if (stencil) {
+        mask |= GL_STENCIL_BUFFER_BIT;
+        MBGL_CHECK_ERROR(glClearStencil(*stencil));
+    }
+
+    MBGL_CHECK_ERROR(glClear(mask));
+}
+
+// Depth
+
+static void prepare(const Depth& depth) {
+    if (depth.test == Depth::Always && !depth.mask) {
+        MBGL_CHECK_ERROR(glDisable(GL_DEPTH_TEST));
+    } else {
+        MBGL_CHECK_ERROR(glEnable(GL_DEPTH_TEST));
+        MBGL_CHECK_ERROR(glDepthFunc(depth.test));
+        MBGL_CHECK_ERROR(glDepthMask(depth.mask));
+        MBGL_CHECK_ERROR(glDepthRange(depth.range.min, depth.range.max));
+    }
+}
+
+// Stencil
+
+template <GLenum F>
+static void prepare(const Stencil::SimpleTest<F>&, GLint ref) {
+    MBGL_CHECK_ERROR(glStencilFunc(F, ref, 0));
+}
+
+template <GLenum F>
+static void prepare(const Stencil::MaskedTest<F>& test, GLint ref) {
+    MBGL_CHECK_ERROR(glStencilFunc(F, ref, test.mask));
+}
+
+static void prepare(const Stencil& stencil) {
+    if (stencil.test.is<Stencil::Always>() && !stencil.mask) {
+        MBGL_CHECK_ERROR(glDisable(GL_STENCIL_TEST));
+    } else {
+        MBGL_CHECK_ERROR(glEnable(GL_STENCIL_TEST));
+        apply_visitor([&] (const auto& t) { prepare(t, stencil.ref); }, stencil.test);
+        MBGL_CHECK_ERROR(glStencilMask(stencil.mask));
+        MBGL_CHECK_ERROR(glStencilOp(stencil.fail, stencil.depthFail, stencil.pass));
+    }
+}
+
+// Color
+
+static void prepare(const Color::Replace&) {
+    assert(false); // unreachable
+}
+
+template <GLenum F>
+static void prepare(const Color::ConstantBlend<F>&) {
+    MBGL_CHECK_ERROR(glBlendEquation(F));
+}
+
+template <GLenum F>
+static void prepare(const Color::LinearBlend<F>& function) {
+    MBGL_CHECK_ERROR(glBlendEquation(F));
+    MBGL_CHECK_ERROR(glBlendFunc(function.srcFactor, function.dstFactor));
+}
+
+static void prepare(const Color& color) {
+    MBGL_CHECK_ERROR(glColorMask(color.mask.r,
+                                 color.mask.g,
+                                 color.mask.b,
+                                 color.mask.a));
+
+    if (color.blendFunction.is<Color::Replace>()) {
+        MBGL_CHECK_ERROR(glDisable(GL_BLEND));
+    } else {
+        MBGL_CHECK_ERROR(glEnable(GL_BLEND));
+        apply_visitor([] (const auto& f) { prepare(f); }, color.blendFunction);
+        MBGL_CHECK_ERROR(glBlendColor(color.blendColor.r,
+                                      color.blendColor.g,
+                                      color.blendColor.b,
+                                      color.blendColor.a));
+    }
+}
+
+// Program
+
+static void prepare(const UniformScalar<int32_t>& scalar, GLenum&) {
+    MBGL_CHECK_ERROR(glUniform1i(scalar.location, scalar.value));
+}
+
+static void prepare(const UniformScalar<float>& scalar, GLenum&) {
+    MBGL_CHECK_ERROR(glUniform1f(scalar.location, scalar.value));
+}
+
+static void prepare(const UniformVector<2, float>& vector, GLenum&) {
+    MBGL_CHECK_ERROR(glUniform2f(vector.location, vector.value[0], vector.value[1]));
+}
+
+static void prepare(const UniformVector<3, float>& vector, GLenum&) {
+    MBGL_CHECK_ERROR(glUniform3f(vector.location, vector.value[0], vector.value[1], vector.value[2]));
+}
+
+static void prepare(const UniformVector<4, float>& vector, GLenum&) {
+    MBGL_CHECK_ERROR(glUniform4f(vector.location, vector.value[0], vector.value[1], vector.value[2], vector.value[3]));
+}
+
+static void prepare(const UniformMatrix<2>& matrix, GLenum&) {
+    MBGL_CHECK_ERROR(glUniformMatrix2fv(matrix.location, 1, GL_FALSE, matrix.value.data()));
+}
+
+static void prepare(const UniformMatrix<3>& matrix, GLenum&) {
+    MBGL_CHECK_ERROR(glUniformMatrix3fv(matrix.location, 1, GL_FALSE, matrix.value.data()));
+}
+
+static void prepare(const UniformMatrix<4>& matrix, GLenum&) {
+    MBGL_CHECK_ERROR(glUniformMatrix4fv(matrix.location, 1, GL_FALSE, matrix.value.data()));
+}
+
+static void prepare(const UniformTexture2d& texture, GLenum& textureUnit) {
+    MBGL_CHECK_ERROR(glActiveTexture(textureUnit));
+    MBGL_CHECK_ERROR(glBindTexture(GL_TEXTURE_2D, texture.texture));
+    MBGL_CHECK_ERROR(glUniform1i(texture.location, textureUnit));
+    ++textureUnit;
+}
+
+static void prepare(const Program& program) {
+    MBGL_CHECK_ERROR(glUseProgram(program.program));
+
+    GLenum textureUnit = GL_TEXTURE0;
+    for (const auto& uniform : program.uniforms) {
+        apply_visitor([&] (const auto& u) { prepare(u, textureUnit); }, uniform);
+    }
+}
+
+// Vertexes
+
+template <typename T> struct AttributeType;
+
+template <> struct AttributeType<int8_t>   : std::integral_constant<GLenum, GL_BYTE> {};
+template <> struct AttributeType<uint8_t>  : std::integral_constant<GLenum, GL_UNSIGNED_BYTE> {};
+template <> struct AttributeType<int16_t>  : std::integral_constant<GLenum, GL_SHORT> {};
+template <> struct AttributeType<uint16_t> : std::integral_constant<GLenum, GL_UNSIGNED_SHORT> {};
+template <> struct AttributeType<int32_t>  : std::integral_constant<GLenum, GL_INT> {};
+template <> struct AttributeType<uint32_t> : std::integral_constant<GLenum, GL_UNSIGNED_INT> {};
+template <> struct AttributeType<float>    : std::integral_constant<GLenum, GL_FLOAT> {};
+template <> struct AttributeType<double>   : std::integral_constant<GLenum, GL_DOUBLE> {};
+
+template <std::size_t N, class T>
+static void prepare(const Vertexes& vertexes, const TypedVertexAttribute<N, T>& attr) {
+    MBGL_CHECK_ERROR(glEnableVertexAttribArray(attr.location));
+    MBGL_CHECK_ERROR(glVertexAttribPointer(attr.location,
+                                           N,
+                                           AttributeType<T>::value,
+                                           GL_FALSE,
+                                           attr.byteStride.value,
+                                           attr.byteOffset + (vertexes.vertexSize * vertexes.vertexOffset)));
+}
+
+static void prepare(const Vertexes& vertexes) {
+    MBGL_CHECK_ERROR(glBindBuffer(GL_ARRAY_BUFFER,
+                                  vertexes.buffer));
+
+    for (const auto& attribute : vertexes.attributes) {
+        apply_visitor([&] (const auto& attr) { prepare(vertexes, attr); }, attribute);
+    }
+}
+
+// Primitive
+
+static GLenum prepare(const Points& points) {
+    MBGL_CHECK_ERROR(glPointSize(points.pointSize));
+    return GL_POINTS;
+}
+
+static GLenum prepare(const Lines& lines) {
+    MBGL_CHECK_ERROR(glLineWidth(lines.lineWidth));
+    return GL_LINES;
+}
+
+static GLenum prepare(const LineStrip& lineStrip) {
+    MBGL_CHECK_ERROR(glLineWidth(lineStrip.lineWidth));
+    return GL_LINE_STRIP;
+}
+
+static GLenum prepare(const Triangles&) {
+    return GL_TRIANGLES;
+}
+
+static GLenum prepare(const TriangleStrip&) {
+    return GL_TRIANGLE_STRIP;
+}
+
+static GLenum prepare(const Primitive& primitive) {
+    return apply_visitor([&] (const auto& p) { return prepare(p); }, primitive);
+}
+
+// Draw
+
+template <typename T> struct IndexType;
+
+template <> struct IndexType<uint8_t>  : std::integral_constant<GLenum, GL_UNSIGNED_BYTE> {};
+template <> struct IndexType<uint16_t> : std::integral_constant<GLenum, GL_UNSIGNED_SHORT> {};
+template <> struct IndexType<uint32_t> : std::integral_constant<GLenum, GL_UNSIGNED_INT> {};
+
+template <typename P, typename T>
+static void draw(const Vertexes&,
+                 const IndexBuffer<P, T>& slice,
+                 const Primitive& primitive) {
+    MBGL_CHECK_ERROR(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
+                                  slice.buffer));
+
+    MBGL_CHECK_ERROR(glDrawElements(prepare(primitive),
+                                    slice.indexCount.value,
+                                    IndexType<T>::value,
+                                    slice.byteOffset));
+}
+
+static void draw(const Vertexes& vertexes,
+                 const Unindexed&,
+                 const Primitive& primitive) {
+    MBGL_CHECK_ERROR(glDrawArrays(prepare(primitive),
+                                  vertexes.vertexOffset.value,
+                                  vertexes.vertexCount.value));
+}
+
+void Context::draw(const Depth& depth,
+                   const Stencil& stencil,
+                   const Color& color,
+                   const Program& program_,
+                   const Vertexes& vertexes,
+                   const Indexes& indexes,
+                   const Primitive& primitive)
+{
+    prepare(depth);
+    prepare(stencil);
+    prepare(color);
+    prepare(program_);
+    prepare(vertexes);
+    apply_visitor([&] (const auto& indexes_) { gl::draw(vertexes, indexes_, primitive); }, indexes);
 }
 
 void Context::performCleanup() {

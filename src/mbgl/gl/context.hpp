@@ -3,6 +3,13 @@
 #include <mbgl/gl/object.hpp>
 #include <mbgl/gl/state.hpp>
 #include <mbgl/gl/value.hpp>
+#include <mbgl/gl/depth.hpp>
+#include <mbgl/gl/stencil.hpp>
+#include <mbgl/gl/color.hpp>
+#include <mbgl/gl/program.hpp>
+#include <mbgl/gl/vertexes.hpp>
+#include <mbgl/gl/indexes.hpp>
+#include <mbgl/gl/primitive.hpp>
 #include <mbgl/util/noncopyable.hpp>
 
 #include <memory>
@@ -27,6 +34,34 @@ public:
     UniqueFramebuffer createFramebuffer();
 
     void uploadBuffer(BufferType, size_t, void*);
+
+    template <class V, std::size_t N>
+    VertexBuffer<V> createVertexBuffer(const std::array<V, N>& a) {
+        return VertexBuffer<V> {
+            ElementLength { N },
+            createVertexBufferWithData(a.data(), a.size() * sizeof(V))
+        };
+    }
+
+    template <class V>
+    VertexBuffer<V> createVertexBuffer(const std::vector<V>& v) {
+        return VertexBuffer<V> {
+            ElementLength { v.size() },
+            createVertexBufferWithData(v.data(), v.size() * sizeof(V))
+        };
+    }
+
+    void clear(optional<mbgl::Color> color,
+               optional<float> depth,
+               optional<int32_t> stencil);
+
+    void draw(const Depth&,
+              const Stencil&,
+              const Color&,
+              const Program&,
+              const Vertexes&,
+              const Indexes&,
+              const Primitive&);
 
     // Actually remove the objects we marked as abandoned with the above methods.
     // Only call this while the OpenGL context is exclusive to this thread.
@@ -62,9 +97,6 @@ public:
     State<value::BlendFunc> blendFunc;
     State<value::BlendColor> blendColor;
     State<value::ColorMask> colorMask;
-    State<value::ClearDepth> clearDepth;
-    State<value::ClearColor> clearColor;
-    State<value::ClearStencil> clearStencil;
     State<value::Program> program;
     State<value::LineWidth> lineWidth;
     State<value::ActiveTexture> activeTexture;
@@ -80,6 +112,8 @@ public:
     State<value::BindVertexArray> vertexArrayObject;
 
 private:
+    UniqueBuffer createVertexBufferWithData(const void* data, std::size_t size);
+
     friend detail::ProgramDeleter;
     friend detail::ShaderDeleter;
     friend detail::BufferDeleter;

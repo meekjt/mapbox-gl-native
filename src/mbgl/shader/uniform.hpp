@@ -20,11 +20,12 @@ public:
         }
     }
 
+    gl::UniformLocation location;
+
 private:
     void bind(const T&);
 
     T current;
-    gl::UniformLocation location;
 };
 
 template <size_t C, size_t R = C>
@@ -49,11 +50,12 @@ public:
         }
     }
 
+    gl::UniformLocation location;
+
 private:
     void bind(const T&);
 
     T current;
-    gl::UniformLocation location;
 };
 
 } // namespace mbgl

@@ -1,14 +1,16 @@
 #pragma once
 
 #include <mbgl/map/mode.hpp>
-#include <mbgl/geometry/debug_font_buffer.hpp>
-#include <mbgl/geometry/vao.hpp>
 #include <mbgl/util/chrono.hpp>
+#include <mbgl/util/geometry.hpp>
+#include <mbgl/util/optional.hpp>
+#include <mbgl/util/noncopyable.hpp>
+#include <mbgl/gl/vertexes.hpp>
+#include <mbgl/gl/plain_vertex.hpp>
 
 namespace mbgl {
 
 class OverscaledTileID;
-class PlainShader;
 
 namespace gl {
 class Context;
@@ -21,10 +23,8 @@ public:
                 bool complete,
                 optional<Timestamp> modified,
                 optional<Timestamp> expires,
-                MapDebugOptions);
-
-    void drawLines(PlainShader&, gl::Context&);
-    void drawPoints(PlainShader&, gl::Context&);
+                MapDebugOptions,
+                gl::Context&);
 
     const bool renderable;
     const bool complete;
@@ -32,9 +32,7 @@ public:
     const optional<Timestamp> expires;
     const MapDebugOptions debugMode;
 
-private:
-    DebugFontBuffer fontBuffer;
-    VertexArrayObject array;
+    const gl::VertexBuffer<gl::PlainVertex> textVertexes;
 };
 
 } // namespace mbgl

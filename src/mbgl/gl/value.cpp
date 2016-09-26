@@ -6,46 +6,6 @@ namespace mbgl {
 namespace gl {
 namespace value {
 
-const constexpr ClearDepth::Type ClearDepth::Default;
-
-void ClearDepth::Set(const Type& value) {
-#if MBGL_USE_GLES2
-    MBGL_CHECK_ERROR(glClearDepthf(value));
-#else
-    MBGL_CHECK_ERROR(glClearDepth(value));
-#endif
-}
-
-ClearDepth::Type ClearDepth::Get() {
-    GLfloat clearDepth;
-    MBGL_CHECK_ERROR(glGetFloatv(GL_DEPTH_CLEAR_VALUE, &clearDepth));
-    return clearDepth;
-}
-
-const constexpr ClearColor::Type ClearColor::Default;
-
-void ClearColor::Set(const Type& value) {
-    MBGL_CHECK_ERROR(glClearColor(value.r, value.g, value.b, value.a));
-}
-
-ClearColor::Type ClearColor::Get() {
-    GLfloat clearColor[4];
-    MBGL_CHECK_ERROR(glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor));
-    return { clearColor[0], clearColor[1], clearColor[2], clearColor[3] };
-}
-
-const constexpr ClearStencil::Type ClearStencil::Default;
-
-void ClearStencil::Set(const Type& value) {
-    MBGL_CHECK_ERROR(glClearStencil(value));
-}
-
-ClearStencil::Type ClearStencil::Get() {
-    GLint clearStencil;
-    MBGL_CHECK_ERROR(glGetIntegerv(GL_STENCIL_CLEAR_VALUE, &clearStencil));
-    return clearStencil;
-}
-
 const constexpr StencilMask::Type StencilMask::Default;
 
 void StencilMask::Set(const Type& value) {

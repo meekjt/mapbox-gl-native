@@ -7,27 +7,6 @@ namespace mbgl {
 namespace gl {
 namespace value {
 
-struct ClearDepth {
-    using Type = float;
-    static const constexpr Type Default = 1;
-    static void Set(const Type&);
-    static Type Get();
-};
-
-struct ClearColor {
-    using Type = Color;
-    static const constexpr Type Default = { 0, 0, 0, 0 };
-    static void Set(const Type&);
-    static Type Get();
-};
-
-struct ClearStencil {
-    using Type = StencilValue;
-    static const constexpr Type Default = 0;
-    static void Set(const Type&);
-    static Type Get();
-};
-
 struct StencilMask {
     using Type = StencilMaskValue;
     static const constexpr Type Default = ~0u;

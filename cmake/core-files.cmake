@@ -53,8 +53,6 @@ set(MBGL_CORE_FILES
     src/mbgl/geometry/circle_buffer.hpp
     src/mbgl/geometry/collision_box_buffer.cpp
     src/mbgl/geometry/collision_box_buffer.hpp
-    src/mbgl/geometry/debug_font_buffer.cpp
-    src/mbgl/geometry/debug_font_buffer.hpp
     src/mbgl/geometry/debug_font_data.hpp
     src/mbgl/geometry/elements_buffer.cpp
     src/mbgl/geometry/elements_buffer.hpp
@@ -77,21 +75,30 @@ set(MBGL_CORE_FILES
 
     # gl
     include/mbgl/gl/gl.hpp
+    src/mbgl/gl/bytes.hpp
+    src/mbgl/gl/color.hpp
     src/mbgl/gl/context.cpp
     src/mbgl/gl/context.hpp
     src/mbgl/gl/debugging.cpp
     src/mbgl/gl/debugging.hpp
+    src/mbgl/gl/depth.hpp
     src/mbgl/gl/extension.cpp
     src/mbgl/gl/extension.hpp
     src/mbgl/gl/gl.cpp
+    src/mbgl/gl/indexes.hpp
     src/mbgl/gl/object.cpp
     src/mbgl/gl/object.hpp
+    src/mbgl/gl/plain_vertex.hpp
+    src/mbgl/gl/primitive.hpp
+    src/mbgl/gl/program.hpp
     src/mbgl/gl/state.hpp
+    src/mbgl/gl/stencil.hpp
     src/mbgl/gl/types.hpp
     src/mbgl/gl/value.cpp
     src/mbgl/gl/value.hpp
     src/mbgl/gl/vertex_array.cpp
     src/mbgl/gl/vertex_array.hpp
+    src/mbgl/gl/vertexes.hpp
 
     # layout
     src/mbgl/layout/clip_lines.cpp

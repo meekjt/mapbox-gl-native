@@ -12,6 +12,15 @@ PlainShader::PlainShader(gl::Context& context, Defines defines)
              context, defines) {
 }
 
+gl::Program PlainShader::bindUniforms(const mat4& matrix,
+                                      const Color& color,
+                                      float opacity) {
+    u_matrix = matrix;
+    u_color = color;
+    u_opacity = opacity;
+    return gl::Program { getID(), {} };
+}
+
 void PlainShader::bind(int8_t* offset) {
     MBGL_CHECK_ERROR(glEnableVertexAttribArray(a_pos));
     MBGL_CHECK_ERROR(glVertexAttribPointer(a_pos, 2, GL_SHORT, false, 0, offset));
