@@ -721,17 +721,20 @@ void Map::removeAnnotation(AnnotationID annotation) {
 
 #pragma mark - Feature query api
 
-std::vector<Feature> Map::queryRenderedFeatures(const ScreenCoordinate& point, const optional<std::vector<std::string>>& layerIDs) {
+std::vector<Feature> Map::queryRenderedFeatures(const ScreenCoordinate& point, const optional<std::vector<std::string>>& layerIDs,
+        const optional<std::unordered_set<std::string>>& sourceIDs) {
     if (!impl->style) return {};
 
     return impl->style->queryRenderedFeatures({
         { point },
         impl->transform.getState(),
-        layerIDs
+        layerIDs,
+        sourceIDs
     });
 }
 
-std::vector<Feature> Map::queryRenderedFeatures(const ScreenBox& box, const optional<std::vector<std::string>>& layerIDs) {
+std::vector<Feature> Map::queryRenderedFeatures(const ScreenBox& box, const optional<std::vector<std::string>>& layerIDs,
+        const optional<std::unordered_set<std::string>>& sourceIDs) {
     if (!impl->style) return {};
 
     return impl->style->queryRenderedFeatures({
@@ -743,7 +746,8 @@ std::vector<Feature> Map::queryRenderedFeatures(const ScreenBox& box, const opti
             box.min
         },
         impl->transform.getState(),
-        layerIDs
+        layerIDs,
+        sourceIDs
     });
 }
 

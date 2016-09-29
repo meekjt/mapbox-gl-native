@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <string>
 #include <functional>
+#include <unordered_set>
 #include <vector>
 #include <memory>
 
@@ -173,8 +174,10 @@ public:
     double getDefaultPitch() const;
 
     // Feature queries
-    std::vector<Feature> queryRenderedFeatures(const ScreenCoordinate&, const optional<std::vector<std::string>>& layerIDs = {});
-    std::vector<Feature> queryRenderedFeatures(const ScreenBox&,        const optional<std::vector<std::string>>& layerIDs = {});
+    std::vector<Feature> queryRenderedFeatures(const ScreenCoordinate&,
+        const optional<std::vector<std::string>>& layerIDs = {}, const optional<std::unordered_set<std::string>>& sourceIDs = {});
+    std::vector<Feature> queryRenderedFeatures(const ScreenBox&,
+        const optional<std::vector<std::string>>& layerIDs = {}, const optional<std::unordered_set<std::string>>& sourceIDs = {});
     AnnotationIDs queryPointAnnotations(const ScreenBox&);
 
     // Memory
