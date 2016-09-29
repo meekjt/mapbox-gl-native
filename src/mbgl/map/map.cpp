@@ -752,7 +752,9 @@ std::vector<Feature> Map::queryRenderedFeatures(const ScreenBox& box, const opti
 }
 
 AnnotationIDs Map::queryPointAnnotations(const ScreenBox& box) {
-    auto features = queryRenderedFeatures(box, {{ AnnotationManager::PointLayerID }});
+    auto features = queryRenderedFeatures(box,
+        {{ AnnotationManager::PointLayerID }}, {{ AnnotationManager::SourceID }});
+
     AnnotationIDs ids;
     ids.reserve(features.size());
     for (auto &feature : features) {
