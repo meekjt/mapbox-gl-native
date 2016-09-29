@@ -23,9 +23,21 @@
 
 @synthesize identifier;
 @synthesize attributes;
+// synthesize the feature dictionary
 
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];
+}
+
+- (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
+    
+    return @{@"type":@"Feature",
+                     @"properties":(self.attributes) ? self.attributes : [NSDictionary dictionary],
+                     @"geometry":@{
+                             @"type":@"Point",
+                             @"coordinates":@[@(self.coordinate.longitude), @(self.coordinate.latitude)]
+                             }
+            };
 }
 
 @end
@@ -37,9 +49,28 @@
 
 @synthesize identifier;
 @synthesize attributes;
+// 
 
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];
+}
+
+- (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
+    
+    NSMutableArray *coordinates = [NSMutableArray array];
+    
+    for (int index = 0; index < self.pointCount; index++) {
+        CLLocationCoordinate2D coordinate = self.coordinates[index];
+        [coordinates addObject:@[@(coordinate.longitude), @(coordinate.latitude)]];
+    }
+    
+    return @{@"type":@"Feature",
+             @"properties":(self.attributes) ? self.attributes : [NSDictionary dictionary],
+             @"geometry":@{
+                     @"type":@"LineString",
+                     @"coordinates":coordinates
+                     }
+             };
 }
 
 @end
@@ -56,6 +87,35 @@
     return self.attributes[key];
 }
 
+- (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
+    // TODO: MGLPolygonFeature
+    
+    NSMutableArray *coordinates = [NSMutableArray array];
+    
+    NSMutableArray *exteriorRing = [NSMutableArray array];
+    for (int index = 0; index < self.pointCount; index++) {
+        CLLocationCoordinate2D coordinate = self.coordinates[index];
+        [exteriorRing addObject:@[@(coordinate.longitude), @(coordinate.latitude)]];
+    }
+    [coordinates addObject:exteriorRing];
+    
+    for (MGLPolygon *interiorPolygon in self.interiorPolygons) {
+        NSMutableArray *interiorRing = [NSMutableArray array];
+        for (int index = 0; index < interiorPolygon.pointCount; index++) {
+            CLLocationCoordinate2D coordinate = interiorPolygon.coordinates[index];
+            [interiorRing addObject:@[@(coordinate.longitude), @(coordinate.latitude)]];
+        }
+        [coordinates addObject:interiorRing];
+    }
+    return @{@"type":@"Feature",
+             @"properties":(self.attributes) ? self.attributes : [NSDictionary dictionary],
+             @"geometry":@{
+                     @"type":@"Polygon",
+                     @"coordinates":coordinates
+                     }
+             };
+}
+
 @end
 
 @interface MGLMultiPointFeature () <MGLFeaturePrivate>
@@ -68,6 +128,11 @@
 
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];
+}
+
+- (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
+    // TODO: MGLMultiPointFeature
+    return nil;
 }
 
 @end
@@ -84,6 +149,11 @@
     return self.attributes[key];
 }
 
+- (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
+    // TODO: MGLMultiPolylineFeature
+    return nil;
+}
+
 @end
 
 @interface MGLMultiPolygonFeature () <MGLFeaturePrivate>
@@ -98,6 +168,11 @@
     return self.attributes[key];
 }
 
+- (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
+    // TODO: MGLMultiPolygonFeature
+    return nil;
+}
+
 @end
 
 @interface MGLShapeCollectionFeature () <MGLFeaturePrivate>
@@ -110,6 +185,11 @@
 
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];
+}
+
+- (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
+    // TODO: MGLShapeCollectionFeature
+    return nil;
 }
 
 @end

@@ -60,6 +60,15 @@ NSString * const MGLGeoJSONToleranceOption = @"MGLGeoJSONOptionsClusterTolerance
     return self;
 }
 
+- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier Features:(NSArray<id<MGLFeature>> *)features options:(NSDictionary<NSString *,id> *)options {
+    if (self = [super initWithSourceIdentifier:sourceIdentifier]) {
+        _features = features;
+        _options = options;
+    }
+    
+    return self;
+}
+
 - (mbgl::style::GeoJSONOptions)geoJSONOptions
 {
     auto mbglOptions = mbgl::style::GeoJSONOptions();
@@ -118,8 +127,25 @@ NSString * const MGLGeoJSONToleranceOption = @"MGLGeoJSONOptionsClusterTolerance
     if (self.URL) {
         NSURL *url = self.URL.mgl_URLByStandardizingScheme;
         source->setURL(url.absoluteString.UTF8String);
-    } else {
+    } else if (self.geoJSONData) {
         NSString *string = [[NSString alloc] initWithData:self.geoJSONData encoding:NSUTF8StringEncoding];
+        const auto geojson = mapbox::geojson::parse(string.UTF8String).get<mapbox::geojson::feature_collection>();
+        source->setGeoJSON(geojson);
+        _features = MGLFeaturesFromMBGLFeatures(geojson);
+    } else {
+    
+        NSMutableArray<NS_DICTIONARY_OF(NSString *, id) *> *featuresArray = [NSMutableArray array];
+        for (id<MGLFeature> feature in self.features) {
+            [featuresArray addObject:[feature featureDictionary]];
+        }
+        
+        NS_DICTIONARY_OF(NSString *, id) *featureCollection = @{@"type":@"FeatureCollection",
+                                            @"features":featuresArray};
+        
+        NSError *error;
+        NSData *featuresJSONData = [NSJSONSerialization dataWithJSONObject:featureCollection options:NSJSONWritingPrettyPrinted error:&error];
+        
+        NSString *string = [[NSString alloc] initWithData:featuresJSONData encoding:NSUTF8StringEncoding];
         const auto geojson = mapbox::geojson::parse(string.UTF8String).get<mapbox::geojson::feature_collection>();
         source->setGeoJSON(geojson);
         _features = MGLFeaturesFromMBGLFeatures(geojson);

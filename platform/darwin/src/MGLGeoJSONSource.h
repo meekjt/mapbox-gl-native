@@ -131,6 +131,9 @@ extern NSString * const MGLGeoJSONToleranceOption;
  */
 - (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier URL:(NSURL *)url options:(NS_DICTIONARY_OF(NSString *, id) *)options NS_DESIGNATED_INITIALIZER;
 
+
+- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier Features:(NS_ARRAY_OF(id<MGLFeature>) *)features options:(nullable NS_DICTIONARY_OF(NSString *, id) *)options NS_DESIGNATED_INITIALIZER;
+
 @end
 
 NS_ASSUME_NONNULL_END

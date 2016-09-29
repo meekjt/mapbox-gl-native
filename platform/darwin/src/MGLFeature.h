@@ -83,6 +83,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, readonly) NS_DICTIONARY_OF(NSString *, id) *attributes;
 
+
+
+- (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary;
+
 /**
  Returns the feature attribute for the given attribute name.
  
