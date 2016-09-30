@@ -61,13 +61,13 @@ void FillBucket::addGeometry(const GeometryCollection& geometry) {
             uint16_t lineIndex = lineGroup.vertex_length;
 
             vertexes.emplace_back(ring[0].x, ring[0].y);
-            lines.push_back({static_cast<uint16_t>(lineIndex + nVertices - 1),
-                             static_cast<uint16_t>(lineIndex)});
+            lines.emplace_back(static_cast<uint16_t>(lineIndex + nVertices - 1),
+                               static_cast<uint16_t>(lineIndex));
 
             for (uint32_t i = 1; i < nVertices; i++) {
                 vertexes.emplace_back(ring[i].x, ring[i].y);
-                lines.push_back({static_cast<uint16_t>(lineIndex + i - 1),
-                                 static_cast<uint16_t>(lineIndex + i)});
+                lines.emplace_back(static_cast<uint16_t>(lineIndex + i - 1),
+                                   static_cast<uint16_t>(lineIndex + i));
             }
 
             lineGroup.vertex_length += nVertices;
@@ -87,9 +87,9 @@ void FillBucket::addGeometry(const GeometryCollection& geometry) {
         uint16_t triangleIndex = triangleGroup.vertex_length;
 
         for (uint32_t i = 0; i < nIndicies; i += 3) {
-            triangles.push_back({static_cast<uint16_t>(triangleIndex + indices[i]),
-                                 static_cast<uint16_t>(triangleIndex + indices[i + 1]),
-                                 static_cast<uint16_t>(triangleIndex + indices[i + 2])});
+            triangles.emplace_back(static_cast<uint16_t>(triangleIndex + indices[i]),
+                                   static_cast<uint16_t>(triangleIndex + indices[i + 1]),
+                                   static_cast<uint16_t>(triangleIndex + indices[i + 2]));
         }
 
         triangleGroup.vertex_length += totalVertices;

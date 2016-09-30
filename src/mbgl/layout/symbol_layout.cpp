@@ -474,12 +474,12 @@ void SymbolLayout::addSymbols(Buffer &buffer, const SymbolQuads &symbols, float 
                             minZoom, maxZoom, placementZoom, glyphAngle);
 
         // add the two triangles, referencing the four coordinates we just inserted.
-        buffer.triangles.push_back({static_cast<uint16_t>(triangleIndex + 0),
-                                    static_cast<uint16_t>(triangleIndex + 1),
-                                    static_cast<uint16_t>(triangleIndex + 2)});
-        buffer.triangles.push_back({static_cast<uint16_t>(triangleIndex + 1),
-                                    static_cast<uint16_t>(triangleIndex + 2),
-                                    static_cast<uint16_t>(triangleIndex + 3)});
+        buffer.triangles.emplace_back(static_cast<uint16_t>(triangleIndex + 0),
+                                      static_cast<uint16_t>(triangleIndex + 1),
+                                      static_cast<uint16_t>(triangleIndex + 2));
+        buffer.triangles.emplace_back(static_cast<uint16_t>(triangleIndex + 1),
+                                      static_cast<uint16_t>(triangleIndex + 2),
+                                      static_cast<uint16_t>(triangleIndex + 3));
 
         triangleGroup.vertex_length += glyph_vertex_length;
         triangleGroup.elements_length += 2;

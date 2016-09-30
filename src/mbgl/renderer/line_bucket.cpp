@@ -364,9 +364,9 @@ void LineBucket::addGeometry(const GeometryCoordinates& vertices) {
         uint16_t index = group.vertex_length;
 
         for (const auto& triangle : triangleStore) {
-            triangles.push_back({static_cast<uint16_t>(index + triangle.a),
-                                 static_cast<uint16_t>(index + triangle.b),
-                                 static_cast<uint16_t>(index + triangle.c)});
+            triangles.emplace_back(static_cast<uint16_t>(index + triangle.a),
+                                   static_cast<uint16_t>(index + triangle.b),
+                                   static_cast<uint16_t>(index + triangle.c));
         }
 
         group.vertex_length += vertexCount;

@@ -74,12 +74,12 @@ void CircleBucket::addGeometry(const GeometryCollection& geometryCollection) {
 
             // 1, 2, 3
             // 1, 4, 3
-            indexes.push_back({index,
-                               static_cast<uint16_t>(index + 1),
-                               static_cast<uint16_t>(index + 2)});
-            indexes.push_back({index,
-                               static_cast<uint16_t>(index + 3),
-                               static_cast<uint16_t>(index + 2)});
+            indexes.emplace_back(index,
+                                 static_cast<uint16_t>(index + 1),
+                                 static_cast<uint16_t>(index + 2));
+            indexes.emplace_back(index,
+                                 static_cast<uint16_t>(index + 3),
+                                 static_cast<uint16_t>(index + 2));
 
             group.vertex_length += 4;
             group.elements_length += 2;
