@@ -116,12 +116,12 @@ NSString * const MGLGeoJSONToleranceOption = @"MGLGeoJSONOptionsClusterTolerance
         _features = MGLFeaturesFromMBGLFeatures(geojson);
     } else {
     
-        NS_MUTABLE_ARRAY_OF(NS_DICTIONARY_OF(NSString *, id) *) *featuresArray = [NSMutableArray array];
+        NSMutableArray *featuresArray = [NSMutableArray array];
         for (id<MGLFeature> feature in self.features) {
             [featuresArray addObject:[feature featureDictionary]];
         }
         
-        NS_DICTIONARY_OF(NSString *, id) *featureCollection = @{
+        NSDictionary *featureCollection = @{
             @"type":@"FeatureCollection",
             @"features":featuresArray};
         

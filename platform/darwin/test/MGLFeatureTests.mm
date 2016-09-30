@@ -158,4 +158,20 @@
     XCTAssertEqual(string, shape.attributes[@"string"]);
 }
 
+- (void)testShapeCollectionFeature {
+    
+    CLLocationCoordinate2D interiorCoordinates[] = {
+        CLLocationCoordinate2DMake(100.2, 0.2),
+        CLLocationCoordinate2DMake(100.8, 0.2),
+        CLLocationCoordinate2DMake(100.8, 0.8),
+        CLLocationCoordinate2DMake(100.2, 0.8),
+        CLLocationCoordinate2DMake(100.2, 0.2)};
+    
+    MGLShape *polygon = [MGLPolygon polygonWithCoordinates:interiorCoordinates count:5];
+    
+    NSArray *shapes = @[polygon];
+    
+    __unused MGLShapeCollectionFeature *shapeCollectionFeature = [MGLShapeCollectionFeature shapeCollectionWithShapes:shapes];
+}
+
 @end
