@@ -35,7 +35,7 @@ public:
     void drawVertices(OutlinePatternShader&, gl::Context&, PaintMode);
 
 private:
-    std::vector<PlainVertex> vertexes;
+    std::vector<PlainVertex> vertices;
     std::vector<gl::Line> lines;
     std::vector<gl::Triangle> triangles;
 

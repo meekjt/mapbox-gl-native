@@ -100,7 +100,7 @@ void LineBucket::addGeometry(const GeometryCoordinates& coordinates) {
         nextNormal = util::perp(util::unit(convertPoint<double>(firstCoordinate - *currentCoordinate)));
     }
 
-    const int32_t startVertex = vertexes.size();
+    const int32_t startVertex = vertices.size();
     std::vector<TriangleElement> triangleStore;
 
     for (GLsizei i = 0; i < len; ++i) {
@@ -349,7 +349,7 @@ void LineBucket::addGeometry(const GeometryCoordinates& coordinates) {
         startOfLine = false;
     }
 
-    const GLsizei endVertex = vertexes.size();
+    const GLsizei endVertex = vertices.size();
     const GLsizei vertexCount = endVertex - startVertex;
 
     // Store the triangle/line groups.
@@ -387,8 +387,8 @@ void LineBucket::addCurrentVertex(const GeometryCoordinate& currentCoordinate,
     Point<double> extrude = normal;
     if (endLeft)
         extrude = extrude - (util::perp(normal) * endLeft);
-    vertexes.emplace_back(currentCoordinate.x, currentCoordinate.y, extrude.x, extrude.y, tx, 0, endLeft, distance * LINE_DISTANCE_SCALE);
-    e3 = vertexes.size() - 1 - startVertex;
+    vertices.emplace_back(currentCoordinate.x, currentCoordinate.y, extrude.x, extrude.y, tx, 0, endLeft, distance * LINE_DISTANCE_SCALE);
+    e3 = vertices.size() - 1 - startVertex;
     if (e1 >= 0 && e2 >= 0) {
         triangleStore.emplace_back(e1, e2, e3);
     }
@@ -398,8 +398,8 @@ void LineBucket::addCurrentVertex(const GeometryCoordinate& currentCoordinate,
     extrude = normal * -1.0;
     if (endRight)
         extrude = extrude - (util::perp(normal) * endRight);
-    vertexes.emplace_back(currentCoordinate.x, currentCoordinate.y, extrude.x, extrude.y, tx, 1, -endRight, distance * LINE_DISTANCE_SCALE);
-    e3 = vertexes.size() - 1 - startVertex;
+    vertices.emplace_back(currentCoordinate.x, currentCoordinate.y, extrude.x, extrude.y, tx, 1, -endRight, distance * LINE_DISTANCE_SCALE);
+    e3 = vertices.size() - 1 - startVertex;
     if (e1 >= 0 && e2 >= 0) {
         triangleStore.emplace_back(e1, e2, e3);
     }
@@ -425,8 +425,8 @@ void LineBucket::addPieSliceVertex(const GeometryCoordinate& currentVertex,
     int8_t ty = lineTurnsLeft;
 
     Point<double> flippedExtrude = extrude * (lineTurnsLeft ? -1.0 : 1.0);
-    vertexes.emplace_back(currentVertex.x, currentVertex.y, flippedExtrude.x, flippedExtrude.y, 0, ty, 0, distance * LINE_DISTANCE_SCALE);
-    e3 = vertexes.size() - 1 - startVertex;
+    vertices.emplace_back(currentVertex.x, currentVertex.y, flippedExtrude.x, flippedExtrude.y, 0, ty, 0, distance * LINE_DISTANCE_SCALE);
+    e3 = vertices.size() - 1 - startVertex;
     if (e1 >= 0 && e2 >= 0) {
         triangleStore.emplace_back(e1, e2, e3);
     }
@@ -439,7 +439,7 @@ void LineBucket::addPieSliceVertex(const GeometryCoordinate& currentVertex,
 }
 
 void LineBucket::upload(gl::Context& context) {
-    vertexBuffer = context.createVertexBuffer(std::move(vertexes));
+    vertexBuffer = context.createVertexBuffer(std::move(vertices));
     indexBuffer = context.createIndexBuffer(std::move(triangles));
 
     // From now on, we're only going to render during the translucent pass.

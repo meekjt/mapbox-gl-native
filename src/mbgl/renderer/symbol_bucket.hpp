@@ -52,7 +52,7 @@ private:
     typedef gl::ElementGroup<1> CollisionBoxElementGroup;
 
     struct TextBuffer {
-        std::vector<TextureRectVertex> vertexes;
+        std::vector<TextureRectVertex> vertices;
         std::vector<gl::Triangle> triangles;
         std::vector<std::unique_ptr<TextElementGroup>> groups;
 
@@ -61,7 +61,7 @@ private:
     } text;
 
     struct IconBuffer {
-        std::vector<TextureRectVertex> vertexes;
+        std::vector<TextureRectVertex> vertices;
         std::vector<gl::Triangle> triangles;
         std::vector<std::unique_ptr<IconElementGroup>> groups;
 
@@ -70,7 +70,7 @@ private:
     } icon;
 
     struct CollisionBoxBuffer {
-        std::vector<CollisionBoxVertex> vertexes;
+        std::vector<CollisionBoxVertex> vertices;
         std::vector<gl::Line> lines;
         std::vector<std::unique_ptr<CollisionBoxElementGroup>> groups;
 

@@ -27,8 +27,8 @@ public:
     void drawCircles(CircleShader&, gl::Context&);
 
 private:
-    std::vector<CircleVertex> vertexes;
-    std::vector<gl::Triangle> indexes;
+    std::vector<CircleVertex> vertices;
+    std::vector<gl::Triangle> triangles;
 
     using TriangleGroup = gl::ElementGroup<3>;
     std::vector<std::unique_ptr<TriangleGroup>> triangleGroups;

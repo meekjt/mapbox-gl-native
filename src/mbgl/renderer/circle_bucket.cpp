@@ -18,8 +18,8 @@ CircleBucket::~CircleBucket() {
 }
 
 void CircleBucket::upload(gl::Context& context) {
-    vertexBuffer = context.createVertexBuffer(std::move(vertexes));
-    indexBuffer = context.createIndexBuffer(std::move(indexes));
+    vertexBuffer = context.createVertexBuffer(std::move(vertices));
+    indexBuffer = context.createIndexBuffer(std::move(triangles));
     uploaded = true;
 }
 
@@ -59,10 +59,10 @@ void CircleBucket::addGeometry(const GeometryCollection& geometryCollection) {
             // │ 1     2 │
             // └─────────┘
             //
-            vertexes.emplace_back(x, y, -1, -1); // 1
-            vertexes.emplace_back(x, y, 1, -1); // 2
-            vertexes.emplace_back(x, y, 1, 1); // 3
-            vertexes.emplace_back(x, y, -1, 1); // 4
+            vertices.emplace_back(x, y, -1, -1); // 1
+            vertices.emplace_back(x, y, 1, -1); // 2
+            vertices.emplace_back(x, y, 1, 1); // 3
+            vertices.emplace_back(x, y, -1, 1); // 4
 
             if (!triangleGroups.size() || (triangleGroups.back()->vertex_length + 4 > 65535)) {
                 // Move to a new group because the old one can't hold the geometry.
@@ -74,12 +74,12 @@ void CircleBucket::addGeometry(const GeometryCollection& geometryCollection) {
 
             // 1, 2, 3
             // 1, 4, 3
-            indexes.emplace_back(index,
-                                 static_cast<uint16_t>(index + 1),
-                                 static_cast<uint16_t>(index + 2));
-            indexes.emplace_back(index,
-                                 static_cast<uint16_t>(index + 3),
-                                 static_cast<uint16_t>(index + 2));
+            triangles.emplace_back(index,
+                                   static_cast<uint16_t>(index + 1),
+                                   static_cast<uint16_t>(index + 2));
+            triangles.emplace_back(index,
+                                   static_cast<uint16_t>(index + 3),
+                                   static_cast<uint16_t>(index + 2));
 
             group.vertex_length += 4;
             group.elements_length += 2;

@@ -60,12 +60,12 @@ void FillBucket::addGeometry(const GeometryCollection& geometry) {
             LineGroup& lineGroup = *lineGroups.back();
             uint16_t lineIndex = lineGroup.vertex_length;
 
-            vertexes.emplace_back(ring[0].x, ring[0].y);
+            vertices.emplace_back(ring[0].x, ring[0].y);
             lines.emplace_back(static_cast<uint16_t>(lineIndex + nVertices - 1),
                                static_cast<uint16_t>(lineIndex));
 
             for (uint32_t i = 1; i < nVertices; i++) {
-                vertexes.emplace_back(ring[i].x, ring[i].y);
+                vertices.emplace_back(ring[i].x, ring[i].y);
                 lines.emplace_back(static_cast<uint16_t>(lineIndex + i - 1),
                                    static_cast<uint16_t>(lineIndex + i));
             }
@@ -98,7 +98,7 @@ void FillBucket::addGeometry(const GeometryCollection& geometry) {
 }
 
 void FillBucket::upload(gl::Context& context) {
-    vertexBuffer = context.createVertexBuffer(std::move(vertexes));
+    vertexBuffer = context.createVertexBuffer(std::move(vertices));
     lineIndexBuffer = context.createIndexBuffer(std::move(lines));
     triangleIndexBuffer = context.createIndexBuffer(std::move(triangles));
 

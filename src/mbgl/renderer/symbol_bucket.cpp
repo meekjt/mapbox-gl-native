@@ -22,17 +22,17 @@ SymbolBucket::SymbolBucket(const MapMode mode_,
 
 void SymbolBucket::upload(gl::Context& context) {
     if (hasTextData()) {
-        text.vertexBuffer = context.createVertexBuffer(std::move(text.vertexes));
+        text.vertexBuffer = context.createVertexBuffer(std::move(text.vertices));
         text.indexBuffer = context.createIndexBuffer(std::move(text.triangles));
     }
 
     if (hasIconData()) {
-        icon.vertexBuffer = context.createVertexBuffer(std::move(icon.vertexes));
+        icon.vertexBuffer = context.createVertexBuffer(std::move(icon.vertices));
         icon.indexBuffer = context.createIndexBuffer(std::move(icon.triangles));
     }
 
     if (hasCollisionBoxData()) {
-        collisionBox.vertexBuffer = context.createVertexBuffer(std::move(collisionBox.vertexes));
+        collisionBox.vertexBuffer = context.createVertexBuffer(std::move(collisionBox.vertices));
     }
 
     uploaded = true;

@@ -50,7 +50,7 @@ public:
     style::LineLayoutProperties layout;
 
 private:
-    std::vector<LineVertex> vertexes;
+    std::vector<LineVertex> vertices;
     std::vector<gl::Triangle> triangles;
 
     using TriangleGroup = gl::ElementGroup<6>;
