@@ -11,7 +11,7 @@
 - (void)testSymbolLayer {
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"amsterdam" ofType:@"geojson"];
     NSURL *url = [NSURL fileURLWithPath:filePath];
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"sourceID" URL:url options:nil];
+MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"sourceID" URL:url options:nil];
 MGLSymbolStyleLayer *layer = [[MGLSymbolStyleLayer alloc] initWithLayerIdentifier:@"layerID" source:source];
     [self.mapView.style addSource:source];
     [self.mapView.style addLayer:layer];
