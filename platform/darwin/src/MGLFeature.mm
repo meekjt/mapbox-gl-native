@@ -10,13 +10,6 @@
 #import "MGLPolygon+MGLAdditions.h"
 #import <mbgl/util/geometry.hpp>
 
-@protocol MGLFeaturePrivate <MGLFeature>
-
-@property (nonatomic, copy, nullable, readwrite) id identifier;
-@property (nonatomic, copy, readwrite) NS_DICTIONARY_OF(NSString *, id) *attributes;
-
-@end
-
 @interface MGLPointFeature () <MGLFeaturePrivate>
 @end
 
@@ -87,6 +80,10 @@
                     @"coordinates":self.mgl_coordinates
                     }
             };
+}
+
+- (mbgl::Feature)featureObject {
+    return [self feature];
 }
 
 @end

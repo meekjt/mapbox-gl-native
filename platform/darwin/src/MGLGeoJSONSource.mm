@@ -115,23 +115,15 @@ NSString * const MGLGeoJSONToleranceOption = @"MGLGeoJSONOptionsClusterTolerance
         source->setGeoJSON(geojson);
         _features = MGLFeaturesFromMBGLFeatures(geojson);
     } else {
-    
-        NSMutableArray *featuresArray = [NSMutableArray array];
-        for (id<MGLFeature> feature in self.features) {
-            [featuresArray addObject:[feature featureDictionary]];
+        mbgl::FeatureCollection featureCollection;
+        featureCollection.reserve(self.features.count);
+        for (id <MGLFeaturePrivate> feature in self.features) {
+            featureCollection.push_back([feature featureObject]);
         }
         
-        NSDictionary *featureCollection = @{
-            @"type":@"FeatureCollection",
-            @"features":featuresArray};
+        const auto geoJSON = mbgl::GeoJSON{featureCollection};
+        source->setGeoJSON(geoJSON);
         
-        NSError *error;
-        NSData *featuresJSONData = [NSJSONSerialization dataWithJSONObject:featureCollection options:0 error:&error];
-        
-        NSString *string = [[NSString alloc] initWithData:featuresJSONData encoding:NSUTF8StringEncoding];
-        const auto geojson = mapbox::geojson::parse(string.UTF8String).get<mapbox::geojson::feature_collection>();
-        source->setGeoJSON(geojson);
-        _features = MGLFeaturesFromMBGLFeatures(geojson);
     }
     
     return std::move(source);
