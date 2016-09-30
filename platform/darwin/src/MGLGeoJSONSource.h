@@ -122,7 +122,7 @@ extern NSString * const MGLGeoJSONToleranceOption;
  style specification</a>.
  
  @param sourceIdentifier A string that uniquely identifies the source.
- @param features An array of features that conform to the MGLFeature protocol.
+ @param features An array of features that conform to the `MGLFeature` protocol.
  current application’s resource bundle.
  @param options An NSDictionary of attributes for this source.
  */

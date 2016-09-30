@@ -24,7 +24,6 @@
 
 @synthesize identifier;
 @synthesize attributes;
-// synthesize the feature dictionary
 
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];
@@ -33,7 +32,7 @@
 - (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
     
     return @{@"type":@"Feature",
-                     @"properties":(self.attributes) ? self.attributes : [NSDictionary dictionary],
+             @"properties":(self.attributes) ? self.attributes : @{},
                      @"geometry":@{
                              @"type":@"Point",
                              @"coordinates":@[@(self.coordinate.longitude), @(self.coordinate.latitude)]
@@ -58,7 +57,7 @@
 
 - (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
     return @{@"type":@"Feature",
-             @"properties":(self.attributes) ? self.attributes : [NSDictionary dictionary],
+             @"properties":(self.attributes) ? self.attributes : @{},
              @"geometry":@{
                      @"type":@"LineString",
                      @"coordinates":self.mgl_coordinates
@@ -82,7 +81,7 @@
 
 - (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
     return @{@"type":@"Feature",
-             @"properties":(self.attributes) ? self.attributes : [NSDictionary dictionary],
+             @"properties":(self.attributes) ? self.attributes : @{},
              @"geometry":@{
                     @"type":@"Polygon",
                     @"coordinates":self.mgl_coordinates
@@ -113,7 +112,7 @@
     }
     
     return @{@"type":@"Feature",
-             @"properties":(self.attributes) ? self.attributes : [NSDictionary dictionary],
+             @"properties":(self.attributes) ? self.attributes : @{},
              @"geometry":@{
                      @"type":@"Multipoint",
                      @"coordinates":coordinates
@@ -142,7 +141,7 @@
     }
     
     return @{@"type":@"Feature",
-             @"properties":(self.attributes) ? self.attributes : [NSDictionary dictionary],
+             @"properties":(self.attributes) ? self.attributes : @{},
              @"geometry":@{
                      @"type":@"MultiLineString",
                      @"coordinates":coordinates
@@ -171,7 +170,7 @@
     }
     
     return @{@"type":@"Feature",
-             @"properties":(self.attributes) ? self.attributes : [NSDictionary dictionary],
+             @"properties":(self.attributes) ? self.attributes : @{},
              @"geometry":@{
                      @"type":@"MultiPolygon",
                      @"coordinates":coordinates
@@ -202,7 +201,7 @@
 - (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
     
     return @{@"type":@"Feature",
-             @"properties":(self.attributes) ? self.attributes : [NSDictionary dictionary],
+             @"properties":(self.attributes) ? self.attributes : @{},
              @"geometry":@{
                      @"type":@"GeometryCollection",
                      @"geometries":[self geometryCollection:self.shapes]

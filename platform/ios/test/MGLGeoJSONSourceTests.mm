@@ -31,7 +31,6 @@
     XCTAssertEqual(mbglOptions.buffer, 1976);
     XCTAssertEqual(mbglOptions.tolerance, 0.42);
   
-    // when the supplied option cluster value is not of the correct type
     options = @{MGLGeoJSONClusterOption: @"number 1"};
     source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"source-id" URL:url options:options];
     XCTAssertThrows([source geoJSONOptions]);
@@ -52,12 +51,9 @@
 }
 
 - (void)testMGLGeoJSONSourceWithPolylineFeatures {
-    // TODO: Create feature
-    
     CLLocationCoordinate2D coordinates[] = { CLLocationCoordinate2DMake(0, 0), CLLocationCoordinate2DMake(10, 10)};
     MGLPolylineFeature *polylineFeature = [MGLPolylineFeature polylineWithCoordinates:coordinates count:2];
     
-    // TODO: initialize new source using features
     MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"" features:@[polylineFeature] options:nil];
     
     std::unique_ptr<mbgl::style::Source> mbglSource = [source mbglSource];
@@ -69,8 +65,6 @@
 
 
 - (void)testMGLGeoJSONSourceWithPolygonFeatures {
-    // TODO: Create feature
-    
     CLLocationCoordinate2D coordinates[] = {
         CLLocationCoordinate2DMake(100.0, 0.0),
         CLLocationCoordinate2DMake(101.0, 0.0),
@@ -79,7 +73,6 @@
         CLLocationCoordinate2DMake(100.0, 0.0)};
     MGLPolygonFeature *polygonFeature = [MGLPolygonFeature polygonWithCoordinates:coordinates count:5];
     
-    // TODO: initialize new source using features
     MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"" features:@[polygonFeature] options:nil];
     
     std::unique_ptr<mbgl::style::Source> mbglSource = [source mbglSource];
