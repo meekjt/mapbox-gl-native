@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mbgl/util/geometry.hpp>
+#include <cstdint>
 
 namespace mbgl {
 
@@ -13,10 +13,12 @@ public:
      * @param {number} ey extrude normal
      */
     CircleVertex(int16_t x, int16_t y, float ex, float ey)
-        : a_pos((x * 2) + ((ex + 1) / 2), (y * 2) + ((ey + 1) / 2)) {
-    }
+        : a_pos {
+            static_cast<int16_t>((x * 2) + ((ex + 1) / 2)),
+            static_cast<int16_t>((y * 2) + ((ey + 1) / 2))
+        } {}
 
-    Point<int16_t> a_pos;
+    int16_t a_pos[2];
 
     static void bind(const int8_t* offset);
 };

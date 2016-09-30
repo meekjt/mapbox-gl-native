@@ -1,7 +1,6 @@
 #pragma once
 
-#include <mbgl/util/geometry.hpp>
-
+#include <cstdint>
 #include <cmath>
 
 namespace mbgl {
@@ -10,20 +9,28 @@ namespace mbgl {
 class TextureRectVertex {
 public:
     TextureRectVertex(int16_t x, int16_t y, float ox, float oy, uint16_t tx, uint16_t ty, float minzoom, float maxzoom, float labelminzoom, uint8_t labelangle)
-        : a_pos(x, y),
-          a_offset(::round(ox * 64), ::round(oy * 64)),  // use 1/64 pixels for placement
-          a_texture_pos(tx / 4, ty / 4),
+        : a_pos {
+              x,
+              y
+          },
+          a_offset {
+              static_cast<int16_t>(::round(ox * 64)),  // use 1/64 pixels for placement
+              static_cast<int16_t>(::round(oy * 64))
+          },
+          a_texture_pos {
+              static_cast<uint16_t>(tx / 4),
+              static_cast<uint16_t>(ty / 4)
+          },
           a_data {
               static_cast<uint8_t>(labelminzoom * 10), // 1/10 zoom levels: z16 == 160
               static_cast<uint8_t>(labelangle),
               static_cast<uint8_t>(minzoom * 10),
               static_cast<uint8_t>(::fmin(maxzoom, 25) * 10)
-          } {
-    }
+          } {}
 
-    Point<int16_t> a_pos;
-    Point<int16_t> a_offset;
-    Point<uint16_t> a_texture_pos;
+    int16_t a_pos[2];
+    int16_t a_offset[2];
+    uint16_t a_texture_pos[2];
     uint8_t a_data[4];
 
     static void bind(const int8_t* offset);

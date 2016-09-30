@@ -5,11 +5,9 @@
 namespace mbgl {
 
 void PlainVertex::bind(const int8_t* offset) {
-    constexpr GLint stride = sizeof(PlainVertex);
-    static_assert(stride == 4, "expected PlainVertex size");
+    static_assert(sizeof(PlainVertex) == 4, "expected PlainVertex size");
 
-    MBGL_CHECK_ERROR(glEnableVertexAttribArray(Shader::a_pos));
-    MBGL_CHECK_ERROR(glVertexAttribPointer(Shader::a_pos, 2, GL_SHORT, false, stride, offset + offsetof(PlainVertex, a_pos)));
+    MBGL_BIND_VERTEX_ATTRIBUTE(PlainVertex, a_pos, offset);
 }
 
 } // namespace mbgl

@@ -5,11 +5,9 @@
 namespace mbgl {
 
 void CircleVertex::bind(const int8_t* offset) {
-    constexpr GLint stride = sizeof(CircleVertex);
-    static_assert(stride == 4, "expected CircleVertex size");
+    static_assert(sizeof(CircleVertex) == 4, "expected CircleVertex size");
 
-    MBGL_CHECK_ERROR(glEnableVertexAttribArray(Shader::a_pos));
-    MBGL_CHECK_ERROR(glVertexAttribPointer(Shader::a_pos, 2, GL_SHORT, false, stride, offset + offsetof(CircleVertex, a_pos)));
+    MBGL_BIND_VERTEX_ATTRIBUTE(CircleVertex, a_pos, offset);
 }
 
 } // namespace mbgl

@@ -60,12 +60,12 @@ void FillBucket::addGeometry(const GeometryCollection& geometry) {
             LineGroup& lineGroup = *lineGroups.back();
             uint16_t lineIndex = lineGroup.vertex_length;
 
-            vertexes.push_back({ring[0]});
+            vertexes.emplace_back(ring[0].x, ring[0].y);
             lines.push_back({static_cast<uint16_t>(lineIndex + nVertices - 1),
                              static_cast<uint16_t>(lineIndex)});
 
             for (uint32_t i = 1; i < nVertices; i++) {
-                vertexes.push_back({ring[i]});
+                vertexes.emplace_back(ring[i].x, ring[i].y);
                 lines.push_back({static_cast<uint16_t>(lineIndex + i - 1),
                                  static_cast<uint16_t>(lineIndex + i)});
             }

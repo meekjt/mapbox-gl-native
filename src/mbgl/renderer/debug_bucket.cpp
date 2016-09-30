@@ -39,8 +39,8 @@ std::vector<PlainVertex> buildTextVertexes(const OverscaledTileID& id,
                     };
 
                     if (prev) {
-                        textPoints.push_back({*prev});
-                        textPoints.push_back({p});
+                        textPoints.emplace_back(prev->x, prev->y);
+                        textPoints.emplace_back(p.x, p.y);
                     }
 
                     prev = p;

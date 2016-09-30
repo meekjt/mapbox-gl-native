@@ -41,25 +41,25 @@ using namespace style;
 Painter::Painter(const TransformState& state_)
     : state(state_),
       tileTriangleVertexes(context.createVertexBuffer(std::vector<PlainVertex> {{
-            {{ 0,            0 }},
-            {{ util::EXTENT, 0 }},
-            {{ 0, util::EXTENT }},
-            {{ util::EXTENT, 0 }},
-            {{ 0, util::EXTENT }},
-            {{ util::EXTENT, util::EXTENT }}
+            { 0,            0 },
+            { util::EXTENT, 0 },
+            { 0, util::EXTENT },
+            { util::EXTENT, 0 },
+            { 0, util::EXTENT },
+            { util::EXTENT, util::EXTENT }
       }})),
       tileLineStripVertexes(context.createVertexBuffer(std::vector<PlainVertex> {{
-            {{ 0, 0 }},
-            {{ util::EXTENT, 0 }},
-            {{ util::EXTENT, util::EXTENT }},
-            {{ 0, util::EXTENT }},
-            {{ 0, 0 }}
+            { 0, 0 },
+            { util::EXTENT, 0 },
+            { util::EXTENT, util::EXTENT },
+            { 0, util::EXTENT },
+            { 0, 0 }
       }})),
       rasterVertexes(context.createVertexBuffer(std::vector<RasterVertex> {{
-            { { 0, 0 }, { 0, 0 } },
-            { { util::EXTENT, 0 }, { 32767, 0 } },
-            { { 0, util::EXTENT }, { 0, 32767 } },
-            { { util::EXTENT, util::EXTENT }, { 32767, 32767 } }
+            { 0, 0, 0, 0 },
+            { util::EXTENT, 0, 32767, 0 },
+            { 0, util::EXTENT, 0, 32767 },
+            { util::EXTENT, util::EXTENT, 32767, 32767 }
       }})) {
 #ifndef NDEBUG
     gl::debugging::enable();

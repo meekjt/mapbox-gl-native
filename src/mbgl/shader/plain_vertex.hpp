@@ -1,12 +1,15 @@
 #pragma once
 
-#include <mbgl/util/geometry.hpp>
+#include <cstdint>
 
 namespace mbgl {
 
 class PlainVertex {
 public:
-    Point<int16_t> a_pos;
+    PlainVertex(int16_t x, int16_t y)
+        : a_pos { x, y } {}
+
+    int16_t a_pos[2];
 
     static void bind(const int8_t* offset);
 };

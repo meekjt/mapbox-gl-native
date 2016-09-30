@@ -1,7 +1,6 @@
 #pragma once
 
-#include <mbgl/util/geometry.hpp>
-
+#include <cstdint>
 #include <cmath>
 
 namespace mbgl {
@@ -18,7 +17,10 @@ public:
      * @param {number} dir direction of the line cap (-1/0/1)
      */
     LineVertex(int16_t x, int16_t y, float ex, float ey, bool tx, bool ty, int8_t dir, int32_t linesofar = 0)
-        : a_pos((x * 2) | tx, (y * 2) | ty),
+        : a_pos {
+              static_cast<int16_t>((x * 2) | tx),
+              static_cast<int16_t>((y * 2) | ty)
+          },
           a_data {
               // add 128 to store an byte in an unsigned byte
               static_cast<uint8_t>(::round(extrudeScale * ex) + 128),
@@ -36,10 +38,9 @@ public:
               // so we need to shift the linesofar.
               static_cast<uint8_t>(((dir == 0 ? 0 : (dir < 0 ? -1 : 1 )) + 1) | ((linesofar & 0x3F) << 2)),
               static_cast<uint8_t>(linesofar >> 6)
-          } {
-    }
+          } {}
 
-    Point<int16_t> a_pos;
+    int16_t a_pos[2];
     uint8_t a_data[4];
 
     /*
