@@ -31,6 +31,8 @@ public:
 template <class Primitive>
 class IndexBuffer {
 public:
+    static_assert(std::is_same<Primitive, Line>::value || std::is_same<Primitive, Triangle>::value,
+                  "primitive must be Line or Triangle");
     static constexpr std::size_t primitiveSize = sizeof(Primitive);
     UniqueBuffer buffer;
 };
