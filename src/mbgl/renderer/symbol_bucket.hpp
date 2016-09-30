@@ -53,29 +53,29 @@ private:
 
     struct TextBuffer {
         std::vector<TextureRectVertex> vertexes;
-        std::vector<gl::Triangle<uint16_t>> triangles;
+        std::vector<gl::Triangle> triangles;
         std::vector<std::unique_ptr<TextElementGroup>> groups;
 
         optional<gl::VertexBuffer<TextureRectVertex>> vertexBuffer;
-        optional<gl::IndexBuffer<gl::Triangle<uint16_t>>> indexBuffer;
+        optional<gl::IndexBuffer<gl::Triangle>> indexBuffer;
     } text;
 
     struct IconBuffer {
         std::vector<TextureRectVertex> vertexes;
-        std::vector<gl::Triangle<uint16_t>> triangles;
+        std::vector<gl::Triangle> triangles;
         std::vector<std::unique_ptr<IconElementGroup>> groups;
 
         optional<gl::VertexBuffer<TextureRectVertex>> vertexBuffer;
-        optional<gl::IndexBuffer<gl::Triangle<uint16_t>>> indexBuffer;
+        optional<gl::IndexBuffer<gl::Triangle>> indexBuffer;
     } icon;
 
     struct CollisionBoxBuffer {
         std::vector<CollisionBoxVertex> vertexes;
-        std::vector<gl::Line<uint16_t>> lines;
+        std::vector<gl::Line> lines;
         std::vector<std::unique_ptr<CollisionBoxElementGroup>> groups;
 
         optional<gl::VertexBuffer<CollisionBoxVertex>> vertexBuffer;
-        optional<gl::IndexBuffer<gl::Line<uint16_t>>> indexBuffer;
+        optional<gl::IndexBuffer<gl::Line>> indexBuffer;
     } collisionBox;
 };
 

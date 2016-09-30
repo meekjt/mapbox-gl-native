@@ -51,13 +51,13 @@ public:
 
 private:
     std::vector<LineVertex> vertexes;
-    std::vector<gl::Triangle<uint16_t>> triangles;
+    std::vector<gl::Triangle> triangles;
 
     using TriangleGroup = gl::ElementGroup<6>;
     std::vector<std::unique_ptr<TriangleGroup>> triangleGroups;
 
     optional<gl::VertexBuffer<LineVertex>> vertexBuffer;
-    optional<gl::IndexBuffer<gl::Triangle<uint16_t>>> indexBuffer;
+    optional<gl::IndexBuffer<gl::Triangle>> indexBuffer;
 
     int32_t e1;
     int32_t e2;

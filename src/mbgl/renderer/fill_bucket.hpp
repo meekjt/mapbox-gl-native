@@ -36,8 +36,8 @@ public:
 
 private:
     std::vector<PlainVertex> vertexes;
-    std::vector<gl::Line<uint16_t>> lines;
-    std::vector<gl::Triangle<uint16_t>> triangles;
+    std::vector<gl::Line> lines;
+    std::vector<gl::Triangle> triangles;
 
     typedef gl::ElementGroup<4> LineGroup;
     typedef gl::ElementGroup<4> TriangleGroup;
@@ -45,8 +45,8 @@ private:
     std::vector<std::unique_ptr<TriangleGroup>> triangleGroups;
 
     optional<gl::VertexBuffer<PlainVertex>> vertexBuffer;
-    optional<gl::IndexBuffer<gl::Line<uint16_t>>> lineIndexBuffer;
-    optional<gl::IndexBuffer<gl::Triangle<uint16_t>>> triangleIndexBuffer;
+    optional<gl::IndexBuffer<gl::Line>> lineIndexBuffer;
+    optional<gl::IndexBuffer<gl::Triangle>> triangleIndexBuffer;
 };
 
 } // namespace mbgl

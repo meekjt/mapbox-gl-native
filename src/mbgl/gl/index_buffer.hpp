@@ -6,19 +6,17 @@
 namespace mbgl {
 namespace gl {
 
-template <class Index>
 struct Line {
     static constexpr std::size_t IndexCount = 2;
-    Index a;
-    Index b;
+    uint16_t a;
+    uint16_t b;
 };
 
-template <class Index>
 struct Triangle {
     static constexpr std::size_t IndexCount = 3;
-    Index a;
-    Index b;
-    Index c;
+    uint16_t a;
+    uint16_t b;
+    uint16_t c;
 };
 
 template <class Primitive>

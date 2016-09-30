@@ -28,13 +28,13 @@ public:
 
 private:
     std::vector<CircleVertex> vertexes;
-    std::vector<gl::Triangle<uint16_t>> indexes;
+    std::vector<gl::Triangle> indexes;
 
     using TriangleGroup = gl::ElementGroup<3>;
     std::vector<std::unique_ptr<TriangleGroup>> triangleGroups;
 
     optional<gl::VertexBuffer<CircleVertex>> vertexBuffer;
-    optional<gl::IndexBuffer<gl::Triangle<uint16_t>>> indexBuffer;
+    optional<gl::IndexBuffer<gl::Triangle>> indexBuffer;
 
     const MapMode mode;
 };
