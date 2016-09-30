@@ -795,14 +795,16 @@ typedef NS_ENUM(NSInteger, MBXSettingsMiscellaneousRows) {
 {
     CGRect queryRect = CGRectInset(self.mapView.bounds, 100, 200);
     NSArray *features = [self.mapView visibleFeaturesInRect:queryRect];
+    
+    /**
     NSMutableArray *polygonFeatures = [NSMutableArray array];
     for (id<MGLFeature> feature in features) {
         if ([feature isMemberOfClass:[MGLPolygonFeature class]]) {
             [polygonFeatures addObject:feature];
         }
     }
-    
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"itua-polygon-id" features:polygonFeatures options:nil];
+    **/
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"itua-polygon-id" features:features options:nil];
     [self.mapView.style addSource:source];
     
     MGLFillStyleLayer *fillLayer = [[MGLFillStyleLayer alloc] initWithLayerIdentifier:@"itua-layer-id" source:source];
