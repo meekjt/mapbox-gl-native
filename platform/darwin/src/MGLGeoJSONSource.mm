@@ -22,30 +22,12 @@ NSString * const MGLGeoJSONToleranceOption = @"MGLGeoJSONOptionsClusterTolerance
 
 @implementation MGLGeoJSONSource
 
-- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier geoJSONData:(NSData *)data
-{
-    if (self = [super initWithSourceIdentifier:sourceIdentifier])
-    {
-        _geoJSONData = data;
-    }
-    return self;
-}
-
 - (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier geoJSONData:(NSData *)data options:(NS_DICTIONARY_OF(NSString *, id) *)options
 {
     if (self = [super initWithSourceIdentifier:sourceIdentifier])
     {
         _geoJSONData = data;
         _options = options;
-    }
-    return self;
-}
-
-- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier URL:(NSURL *)url
-{
-    if (self = [super initWithSourceIdentifier:sourceIdentifier])
-    {
-        _URL = url;
     }
     return self;
 }
@@ -60,7 +42,7 @@ NSString * const MGLGeoJSONToleranceOption = @"MGLGeoJSONOptionsClusterTolerance
     return self;
 }
 
-- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier Features:(NSArray<id<MGLFeature>> *)features options:(NSDictionary<NSString *,id> *)options {
+- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier features:(NSArray<id<MGLFeature>> *)features options:(NS_DICTIONARY_OF(NSString *,id) *)options {
     if (self = [super initWithSourceIdentifier:sourceIdentifier]) {
         _features = features;
         _options = options;
@@ -134,16 +116,17 @@ NSString * const MGLGeoJSONToleranceOption = @"MGLGeoJSONOptionsClusterTolerance
         _features = MGLFeaturesFromMBGLFeatures(geojson);
     } else {
     
-        NSMutableArray<NS_DICTIONARY_OF(NSString *, id) *> *featuresArray = [NSMutableArray array];
+        NS_MUTABLE_ARRAY_OF(NS_DICTIONARY_OF(NSString *, id) *) *featuresArray = [NSMutableArray array];
         for (id<MGLFeature> feature in self.features) {
             [featuresArray addObject:[feature featureDictionary]];
         }
         
-        NS_DICTIONARY_OF(NSString *, id) *featureCollection = @{@"type":@"FeatureCollection",
-                                            @"features":featuresArray};
+        NS_DICTIONARY_OF(NSString *, id) *featureCollection = @{
+            @"type":@"FeatureCollection",
+            @"features":featuresArray};
         
         NSError *error;
-        NSData *featuresJSONData = [NSJSONSerialization dataWithJSONObject:featureCollection options:NSJSONWritingPrettyPrinted error:&error];
+        NSData *featuresJSONData = [NSJSONSerialization dataWithJSONObject:featureCollection options:0 error:&error];
         
         NSString *string = [[NSString alloc] initWithData:featuresJSONData encoding:NSUTF8StringEncoding];
         const auto geojson = mapbox::geojson::parse(string.UTF8String).get<mapbox::geojson::feature_collection>();

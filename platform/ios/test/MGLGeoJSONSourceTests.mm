@@ -42,7 +42,7 @@
     NSString *data = @"{\"type\": \"FeatureCollection\",\"features\": [{\"type\": \"Feature\",\"properties\": {},\"geometry\": {\"type\": \"LineString\",\"coordinates\": [[-107.75390625,40.329795743702064],[-104.34814453125,37.64903402157866]]}}]}";
     
     NSData *geoJSON = [data dataUsingEncoding:NSUTF8StringEncoding];
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"test-id" geoJSONData:geoJSON];
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"test-id" geoJSONData:geoJSON options:nil];
     
     [source mbglSource];
     
@@ -58,10 +58,9 @@
     MGLPolylineFeature *polylineFeature = [MGLPolylineFeature polylineWithCoordinates:coordinates count:2];
     
     // TODO: initialize new source using features
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"" Features:@[polylineFeature] options:nil];
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"" features:@[polylineFeature] options:nil];
     
     std::unique_ptr<mbgl::style::Source> mbglSource = [source mbglSource];
-    
     
     XCTAssertNotNil(source.features);
     XCTAssertEqual(source.features.count, 1);
@@ -81,10 +80,9 @@
     MGLPolygonFeature *polygonFeature = [MGLPolygonFeature polygonWithCoordinates:coordinates count:5];
     
     // TODO: initialize new source using features
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"" Features:@[polygonFeature] options:nil];
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"" features:@[polygonFeature] options:nil];
     
     std::unique_ptr<mbgl::style::Source> mbglSource = [source mbglSource];
-    
     
     XCTAssertNotNil(source.features);
     XCTAssertEqual(source.features.count, 1);
@@ -92,8 +90,6 @@
 }
 
 - (void)testMGLGeoJSONSourceWithPolygonFeaturesInculdingInteriorPolygons {
-    // TODO: Create feature
-    
     CLLocationCoordinate2D coordinates[] = {
         CLLocationCoordinate2DMake(100.0, 0.0),
         CLLocationCoordinate2DMake(101.0, 0.0),
@@ -112,11 +108,9 @@
     
     MGLPolygonFeature *polygonFeature = [MGLPolygonFeature polygonWithCoordinates:coordinates count:5 interiorPolygons:@[polygon]];
     
-    // TODO: initialize new source using features
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"" Features:@[polygonFeature] options:nil];
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"" features:@[polygonFeature] options:nil];
     
     std::unique_ptr<mbgl::style::Source> mbglSource = [source mbglSource];
-    
     
     XCTAssertNotNil(source.features);
     XCTAssertEqual(source.features.count, 1);

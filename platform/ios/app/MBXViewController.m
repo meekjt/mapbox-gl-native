@@ -697,7 +697,7 @@ typedef NS_ENUM(NSInteger, MBXSettingsMiscellaneousRows) {
 {
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"amsterdam" ofType:@"geojson"];
     NSURL *geoJSONURL = [NSURL fileURLWithPath:filePath];
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"ams" URL:geoJSONURL];
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"ams" URL:geoJSONURL options:nil];
     [self.mapView.style addSource:source];
 
     MGLFillStyleLayer *fillLayer = [[MGLFillStyleLayer alloc] initWithLayerIdentifier:@"test" source:source];
@@ -802,7 +802,7 @@ typedef NS_ENUM(NSInteger, MBXSettingsMiscellaneousRows) {
         }
     }
     
-    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"itua-polygon-id" Features:polygonFeatures options:nil];
+    MGLGeoJSONSource *source = [[MGLGeoJSONSource alloc] initWithSourceIdentifier:@"itua-polygon-id" features:polygonFeatures options:nil];
     [self.mapView.style addSource:source];
     
     MGLFillStyleLayer *fillLayer = [[MGLFillStyleLayer alloc] initWithLayerIdentifier:@"itua-layer-id" source:source];

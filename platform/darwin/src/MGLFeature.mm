@@ -57,9 +57,9 @@
 
 - (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
     
-    NSMutableArray *coordinates = [NSMutableArray array];
+    NS_MUTABLE_ARRAY_OF(NS_ARRAY_OF(NSNumber *) *) *coordinates = [NSMutableArray array];
     
-    for (int index = 0; index < self.pointCount; index++) {
+    for (NSUInteger index = 0; index < self.pointCount; index++) {
         CLLocationCoordinate2D coordinate = self.coordinates[index];
         [coordinates addObject:@[@(coordinate.longitude), @(coordinate.latitude)]];
     }
@@ -90,17 +90,17 @@
 - (NS_DICTIONARY_OF(NSString *, id) *)featureDictionary {
     // TODO: MGLPolygonFeature
     
-    NSMutableArray *coordinates = [NSMutableArray array];
+    NS_MUTABLE_ARRAY_OF(NS_MUTABLE_ARRAY_OF(NS_ARRAY_OF(NSNumber *) *) *) *coordinates = [NSMutableArray array];
     
-    NSMutableArray *exteriorRing = [NSMutableArray array];
-    for (int index = 0; index < self.pointCount; index++) {
+    NS_MUTABLE_ARRAY_OF(NS_ARRAY_OF(NSNumber *) *) *exteriorRing = [NSMutableArray array];
+    for (NSUInteger index = 0; index < self.pointCount; index++) {
         CLLocationCoordinate2D coordinate = self.coordinates[index];
         [exteriorRing addObject:@[@(coordinate.longitude), @(coordinate.latitude)]];
     }
     [coordinates addObject:exteriorRing];
     
     for (MGLPolygon *interiorPolygon in self.interiorPolygons) {
-        NSMutableArray *interiorRing = [NSMutableArray array];
+        NS_MUTABLE_ARRAY_OF(NS_ARRAY_OF(NSNumber *) *) *interiorRing = [NSMutableArray array];
         for (int index = 0; index < interiorPolygon.pointCount; index++) {
             CLLocationCoordinate2D coordinate = interiorPolygon.coordinates[index];
             [interiorRing addObject:@[@(coordinate.longitude), @(coordinate.latitude)]];

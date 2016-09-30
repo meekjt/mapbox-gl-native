@@ -90,14 +90,6 @@ extern NSString * const MGLGeoJSONToleranceOption;
 @property (nonatomic, readonly, nullable) NSURL *URL;
 
 /**
- Initializes a source with the given identifier and GeoJSON data.
- 
- @param sourceIdentifier A string that uniquely identifies the source.
- @param geoJSONData An NSData object representing GeoJSON source code.
- */
-- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier geoJSONData:(NSData *)data NS_DESIGNATED_INITIALIZER;
-
-/**
  Initializes a source with the given identifier, GeoJSON data, and a dictionary
  of options for the source as specified by the
  <a href="https://www.mapbox.com/mapbox-gl-style-spec/#sources-geojson">the
@@ -107,16 +99,7 @@ extern NSString * const MGLGeoJSONToleranceOption;
  @param geoJSONData An NSData object representing GeoJSON source code.
  @param options An NSDictionary of attributes for this source.
  */
-- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier geoJSONData:(NSData *)data options:(NS_DICTIONARY_OF(NSString *, id) *)options NS_DESIGNATED_INITIALIZER;
-
-/**
- Initializes a source with the given identifier and URL.
- 
- @param sourceIdentifier A string that uniquely identifies the source.
- @param URL An HTTP(S) URL, absolute file URL, or local file URL relative to the
-    current application’s resource bundle.
- */
-- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier URL:(NSURL *)url NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier geoJSONData:(NSData *)data options:(nullable NS_DICTIONARY_OF(NSString *, id) *)options NS_DESIGNATED_INITIALIZER;
 
 /**
  Initializes a source with the given identifier, a URL, and a dictionary of
@@ -129,10 +112,21 @@ extern NSString * const MGLGeoJSONToleranceOption;
     current application’s resource bundle.
  @param options An NSDictionary of attributes for this source.
  */
-- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier URL:(NSURL *)url options:(NS_DICTIONARY_OF(NSString *, id) *)options NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier URL:(NSURL *)url options:(nullable NS_DICTIONARY_OF(NSString *, id) *)options NS_DESIGNATED_INITIALIZER;
 
 
-- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier Features:(NS_ARRAY_OF(id<MGLFeature>) *)features options:(nullable NS_DICTIONARY_OF(NSString *, id) *)options NS_DESIGNATED_INITIALIZER;
+/**
+ Initializes a source with the given identifier, an array of features, and a dictionary of
+ options for the source as specified by the
+ <a href="https://www.mapbox.com/mapbox-gl-style-spec/#sources-geojson">the
+ style specification</a>.
+ 
+ @param sourceIdentifier A string that uniquely identifies the source.
+ @param features An array of features that conform to the MGLFeature protocol.
+ current application’s resource bundle.
+ @param options An NSDictionary of attributes for this source.
+ */
+- (instancetype)initWithSourceIdentifier:(NSString *)sourceIdentifier features:(NS_ARRAY_OF(id<MGLFeature>) *)features options:(nullable NS_DICTIONARY_OF(NSString *, id) *)options NS_DESIGNATED_INITIALIZER;
 
 @end
 
