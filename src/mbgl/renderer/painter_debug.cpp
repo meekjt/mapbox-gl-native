@@ -83,7 +83,7 @@ void Painter::renderDebugFrame(const mat4 &matrix) {
     tileBorderArray.bind(plainShader, tileLineStripVertexes, BUFFER_OFFSET_0, context);
     plainShader.u_color = { 1.0f, 0.0f, 0.0f, 1.0f };
     context.lineWidth = 4.0f * frame.pixelRatio;
-    MBGL_CHECK_ERROR(glDrawArrays(GL_LINE_STRIP, 0, tileLineStripVertexes.vertexCount.value));
+    MBGL_CHECK_ERROR(glDrawArrays(GL_LINE_STRIP, 0, tileLineStripVertexes.vertexCount));
 }
 
 #ifndef NDEBUG

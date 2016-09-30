@@ -84,7 +84,7 @@ void Painter::renderBackground(PaintParameters& parameters, const BackgroundLaye
             plainShader.u_matrix = vertexMatrix;
         }
 
-        MBGL_CHECK_ERROR(glDrawArrays(GL_TRIANGLE_STRIP, 0, tileTriangleVertexes.vertexCount.value));
+        MBGL_CHECK_ERROR(glDrawArrays(GL_TRIANGLE_STRIP, 0, tileTriangleVertexes.vertexCount));
     }
 }
 

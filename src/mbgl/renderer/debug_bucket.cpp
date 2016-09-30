@@ -86,16 +86,16 @@ DebugBucket::DebugBucket(const OverscaledTileID& id,
 }
 
 void DebugBucket::drawLines(PlainShader& shader, gl::Context& context) {
-    if (textVertexes.vertexCount.value != 0) {
+    if (textVertexes.vertexCount != 0) {
         array.bind(shader, textVertexes, BUFFER_OFFSET_0, context);
-        MBGL_CHECK_ERROR(glDrawArrays(GL_LINES, 0, textVertexes.vertexCount.value));
+        MBGL_CHECK_ERROR(glDrawArrays(GL_LINES, 0, textVertexes.vertexCount));
     }
 }
 
 void DebugBucket::drawPoints(PlainShader& shader, gl::Context& context) {
-    if (textVertexes.vertexCount.value != 0) {
+    if (textVertexes.vertexCount != 0) {
         array.bind(shader, textVertexes, BUFFER_OFFSET_0, context);
-        MBGL_CHECK_ERROR(glDrawArrays(GL_POINTS, 0, textVertexes.vertexCount.value));
+        MBGL_CHECK_ERROR(glDrawArrays(GL_POINTS, 0, textVertexes.vertexCount));
     }
 }
 

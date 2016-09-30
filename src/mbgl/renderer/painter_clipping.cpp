@@ -42,7 +42,7 @@ void Painter::drawClippingMasks(PaintParameters& parameters, const std::map<Unwr
 
         const GLint ref = (GLint)(clip.reference.to_ulong());
         context.stencilFunc = { gl::StencilTestFunction::Always, ref, mask };
-        MBGL_CHECK_ERROR(glDrawArrays(GL_TRIANGLES, 0, tileTriangleVertexes.vertexCount.value));
+        MBGL_CHECK_ERROR(glDrawArrays(GL_TRIANGLES, 0, tileTriangleVertexes.vertexCount));
     }
 }
 

@@ -56,7 +56,6 @@ set(MBGL_CORE_FILES
 
     # gl
     include/mbgl/gl/gl.hpp
-    src/mbgl/gl/bytes.hpp
     src/mbgl/gl/context.cpp
     src/mbgl/gl/context.hpp
     src/mbgl/gl/debugging.cpp

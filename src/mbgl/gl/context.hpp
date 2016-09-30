@@ -32,7 +32,7 @@ public:
     template <class V>
     VertexBuffer<V> createVertexBuffer(std::vector<V>&& v) {
         return VertexBuffer<V> {
-            ElementLength { v.size() },
+            v.size(),
             createVertexBuffer(v.data(), v.size() * sizeof(V))
         };
     }
@@ -40,7 +40,6 @@ public:
     template <class P>
     IndexBuffer<P> createIndexBuffer(std::vector<P>&& v) {
         return IndexBuffer<P> {
-            ElementLength { v.size() * P::IndexCount },
             createIndexBuffer(v.data(), v.size() * sizeof(P))
         };
     }

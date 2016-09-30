@@ -34,7 +34,7 @@ void RasterBucket::drawRaster(RasterShader& shader,
     raster.bind(context, 0, Raster::Scaling::Linear);
     raster.bind(context, 1, Raster::Scaling::Linear);
     array.bind(shader, vertices, BUFFER_OFFSET_0, context);
-    MBGL_CHECK_ERROR(glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.vertexCount.value));
+    MBGL_CHECK_ERROR(glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.vertexCount));
 }
 
 bool RasterBucket::hasData() const {

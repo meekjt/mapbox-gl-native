@@ -1,6 +1,5 @@
 #pragma once
 
-#include <mbgl/gl/bytes.hpp>
 #include <mbgl/gl/object.hpp>
 
 namespace mbgl {
@@ -33,7 +32,6 @@ template <class Primitive>
 class IndexBuffer {
 public:
     static constexpr std::size_t primitiveSize = sizeof(Primitive);
-    ElementLength indexCount;
     UniqueBuffer buffer;
 };
 
