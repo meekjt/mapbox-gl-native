@@ -55,7 +55,7 @@ template <> struct AttributeType<uint32_t> : std::integral_constant<GLenum, GL_U
 template <> struct AttributeType<float>    : std::integral_constant<GLenum, GL_FLOAT> {};
 
 template <class V, class E, std::size_t N>
-void bindVertexAttribute(AttributeLocation location, E (V::*)[N], const int8_t* offset, std::size_t memberOffset) {
+void bindVertexAttribute(AttributeLocation location, const E (V::*)[N], const int8_t* offset, std::size_t memberOffset) {
     MBGL_CHECK_ERROR(glEnableVertexAttribArray(location));
     MBGL_CHECK_ERROR(glVertexAttribPointer(location, N, AttributeType<E>::value, false, sizeof(V), offset + memberOffset));
 }

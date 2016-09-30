@@ -9,7 +9,7 @@ public:
     PlainVertex(int16_t x, int16_t y)
         : a_pos { x, y } {}
 
-    int16_t a_pos[2];
+    const int16_t a_pos[2];
 
     static void bind(const int8_t* offset);
 };

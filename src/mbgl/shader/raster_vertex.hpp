@@ -16,8 +16,8 @@ public:
               ty
           } {}
 
-    int16_t a_pos[2];
-    int16_t a_texture_pos[2];
+    const int16_t a_pos[2];
+    const int16_t a_texture_pos[2];
 
     static void bind(const int8_t* offset);
 };

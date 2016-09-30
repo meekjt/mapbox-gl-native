@@ -18,7 +18,7 @@ public:
             static_cast<int16_t>((y * 2) + ((ey + 1) / 2))
         } {}
 
-    int16_t a_pos[2];
+    const int16_t a_pos[2];
 
     static void bind(const int8_t* offset);
 };

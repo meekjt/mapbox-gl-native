@@ -28,10 +28,10 @@ public:
               static_cast<uint8_t>(::fmin(maxzoom, 25) * 10)
           } {}
 
-    int16_t a_pos[2];
-    int16_t a_offset[2];
-    uint16_t a_texture_pos[2];
-    uint8_t a_data[4];
+    const int16_t a_pos[2];
+    const int16_t a_offset[2];
+    const uint16_t a_texture_pos[2];
+    const uint8_t a_data[4];
 
     static void bind(const int8_t* offset);
 };

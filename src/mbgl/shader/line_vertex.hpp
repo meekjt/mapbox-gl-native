@@ -40,8 +40,8 @@ public:
               static_cast<uint8_t>(linesofar >> 6)
           } {}
 
-    int16_t a_pos[2];
-    uint8_t a_data[4];
+    const int16_t a_pos[2];
+    const uint8_t a_data[4];
 
     /*
      * Scale the extrusion vector so that the normal length is this value.
