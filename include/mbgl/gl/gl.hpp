@@ -3,6 +3,7 @@
 #include <mbgl/gl/types.hpp>
 
 #include <stdexcept>
+#include <type_traits>
 
 #if __APPLE__
     #include "TargetConditionals.h"
@@ -54,15 +55,17 @@ template <> struct AttributeType<int32_t>  : std::integral_constant<GLenum, GL_I
 template <> struct AttributeType<uint32_t> : std::integral_constant<GLenum, GL_UNSIGNED_INT> {};
 template <> struct AttributeType<float>    : std::integral_constant<GLenum, GL_FLOAT> {};
 
-template <class V, class E, std::size_t N>
-void bindVertexAttribute(AttributeLocation location, const E (V::*)[N], const int8_t* offset, std::size_t memberOffset) {
+template <std::size_t memberOffset, class V, class E, std::size_t N>
+void bindVertexAttribute(AttributeLocation location, const E (V::*)[N], const int8_t* offset) {
+    static_assert(std::is_standard_layout<V>::value, "vertex type must use standard layout");
+    static_assert(memberOffset % 4 == 0, "vertex attribute must be optimally aligned");
     MBGL_CHECK_ERROR(glEnableVertexAttribArray(location));
     MBGL_CHECK_ERROR(glVertexAttribPointer(location, N, AttributeType<E>::value, false, sizeof(V), offset + memberOffset));
 }
 
 // This has to be a macro because it uses the offsetof macro, which is the only legal way to get a member offset.
 #define MBGL_BIND_VERTEX_ATTRIBUTE(VertexType, member, offset) \
-    ::mbgl::gl::bindVertexAttribute(Shader::member, &VertexType::member, offset, offsetof(VertexType, member))
+    ::mbgl::gl::bindVertexAttribute<offsetof(VertexType, member)>(Shader::member, &VertexType::member, offset)
 
 } // namespace gl
 } // namespace mbgl
